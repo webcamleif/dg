@@ -1,0 +1,316 @@
+<!-- home.html -->
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <div class="starter-template form-width-custom">
+            <h1>Scorecards</h1>
+            {% if active_scorecard %}
+            <div class="scorecard">
+                <h2>{{ active_course.name }}</h2>
+                <h3>Hole: {{ active_hole.hole_number }}</h3>
+                <div class="row">
+                    <div style="position: absolute; left: 20px;">
+                        <p class="distance">Distance: {{ active_hole.distance }} m</p>
+                    </div>
+                    <div style="position: absolute; right: 20px;">
+                        <p class="par">Par: {{ active_hole.par }}</p>
+                    </div>
+                </div>
+                <div id="map-{{ active_course.id }}" style="height: 400px; width: 100%;"></div>
+                <div class="user-score-throws">
+                    <div class="user-score">
+                        <span id="username">{{ current_user.username }}</span>
+                        <span id="score">(E)</span>
+                    </div>
+                    <div class="throws" data-scorecard-id="{{ active_scorecard.id }}" data-course-id="{{ active_scorecard.course_id }}" data-hole-number="{{ active_hole.hole_number }}">
+                        <button class="btn btn-primary decrease-throw">-</button>
+                        <span id="throw-count">0</span>
+                        <button class="btn btn-primary increase-throw">+</button>
+                    </div>
+                </div>
+                <div class="holes-container" id="holes-container">
+                    <div class="holes">
+                        {% for hole in holes %}
+                        <button class="btn btn-primary hole-button {% if hole.hole_number == active_hole.hole_number %}active{% endif %}" data-hole-number="{{ hole.hole_number }}">{{ hole.hole_number }}</button>
+                        {% endfor %}
+                        <button id="finish-button" class="btn btn-primary finish-button">Finish</button>
+                    </div>
+                </div>
+                <div id="complete-scorecard" style="display: none;">
+                    <h2>Complete Scorecard</h2>
+                    <table id="front-nine">
+                        <thead>
+                            <tr>
+                                <th colspan="1">Front Nine</th>
+                                {% for i in range(1, 10) %}
+                                    <th>{{ i }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="front-dist"><td colspan="2">Dist</td></tr>
+                            <tr id="front-par"><td colspan="2">Par</td></tr>
+                            <tr id="front-username"><td colspan="2">{{ current_user.username }}</td></tr>
+                        </tbody>
+                    </table>
+                    <table id="back-nine">
+                        <thead>
+                            <tr>
+                                <th colspan="1">Back Nine</th>
+                                {% for i in range(10, 19) %}
+                                    <th>{{ i }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="back-dist"><td colspan="2">Dist</td></tr>
+                            <tr id="back-par"><td colspan="2">Par</td></tr>
+                            <tr id="back-username"><td colspan="2">{{ current_user.username }}</td></tr>
+                        </tbody>
+                    </table>
+                    <button id="end-round-button" class="btn btn-primary">End Round</button>
+                </div>
+            </div>
+            {% else %}
+                <p>No active scorecards</p>
+                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#selectCourseModal">Create scorecard</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="modal" id="selectCourseModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Select Course</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <ul id="coursesList" class="list-group">
+              <!-- Courses will be added here by JavaScript -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(document).ready(function() {
+        var coursesListEl = $('#coursesList');
+        function loadCourses(lat, lon) {
+            $.get('/available_courses', {lat: lat, lon: lon}, function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    var course = data[i];
+                    var courseEl = $(
+                        `<li class="list-group-item">${course.name}
+                        <span class="badge badge-primary">${course.distance.toFixed(2)} km</span>
+                        <button type="button" class="btn btn-primary select-course" data-course-id="${course.id}">Select</button>
+                        </li>`
+                    );
+                    coursesListEl.append(courseEl);
+                }
+            });
+        }
+        navigator.geolocation.getCurrentPosition(function(position) {
+          loadCourses(position.coords.latitude, position.coords.longitude);
+        });
+        $('body').on('click', '#end-round-button', function() {
+            var scorecardId = $('.throws').data('scorecard-id');
+            $.ajax({
+                url: '/end_round',
+                method: 'POST',
+                data: { scorecard_id: scorecardId },
+                success: function(response) {
+                    if (response.result == 'success') {
+                        window.location.href = '/home';
+                    }
+                }
+            });
+        });
+        $('body').on('click', '#finish-button', function() {
+            if ($(this).hasClass('finish-clicked')) {
+                return;
+            }
+            $(this).addClass('finish-clicked');
+            var scorecardId = $('.throws').data('scorecard-id');
+            $.get('/get_scorecard', { scorecard_id: scorecardId }, function(data) {
+                // Clear the rows before appending new data
+                $('#front-dist').empty().append('<td>Dist</td>');
+                $('#front-par').empty().append('<td>Par</td>');
+                $('#front-username').empty().append('<td>{{ current_user.username }}</td>');
+                $('#back-dist').empty().append('<td>Dist</td>');
+                $('#back-par').empty().append('<td>Par</td>');
+                $('#back-username').empty().append('<td>{{ current_user.username }}</td>');
+                for (var i = 0; i < data.length; i++) {
+                    var hole = data[i];
+                    var dist = `<td>${hole.distance}</td>`;
+                    var par = `<td>${hole.par}</td>`;
+                    var user = `<td>${hole.throws}</td>`;
+                    if (i < 9) {
+                        $('#front-dist').append(dist);
+                        $('#front-par').append(par);
+                        $('#front-username').append(user);
+                    } else {
+                        $('#back-dist').append(dist);
+                        $('#back-par').append(par);
+                        $('#back-username').append(user);
+                    }
+                }
+                // Hide all child elements of the scorecard div except holes
+                $('.scorecard').children().not('#holes-container').hide();
+                // Show the complete scorecard
+                $('#complete-scorecard').show();
+            });
+        });
+        $('body').on('click', '.select-course', function() {
+            var courseId = $(this).data('course-id');
+            $.ajax({
+                url: '/select_course',
+                method: 'POST',
+                data: { course_id: courseId },
+                success: function(response) {
+                    if (response.result == 'success') {
+                        window.location.href = '/home';
+                    }
+                }
+            });
+        });
+    
+        $('body').on('click', '.increase-throw, .decrease-throw', function() {
+            var count = parseInt($('#throw-count').text());
+            if ($(this).hasClass('increase-throw')) {
+                count++;
+            } else if (count > 0) {
+                count--;
+            }
+            $('#throw-count').text(count);
+        
+            // send updated count to server
+            var scorecardId = $(this).parent().data('scorecard-id');
+            var holeNumber = $('.throws').data('hole-number');  // Use the 'data-hole-number' of the '.throws' div
+            console.log('Sending request with data:', {
+                scorecard_id: scorecardId,
+                hole_number: holeNumber,
+                throw_count: count,
+            });
+            $.ajax({
+                url: '/update_throw_count',
+                method: 'POST',
+                data: {
+                    scorecard_id: scorecardId,
+                    hole_number: holeNumber,
+                    throw_count: count,
+                },
+                success: function(response) {
+                    if(response.result === 'success'){
+                        updateThrowCount();
+                        updateScore();
+                    }
+                }
+            });
+        });
+         $('body').on('click', '.hole-button', function(e) {
+            e.preventDefault();  // Prevent the default behavior (which is to immediately redirect)
+            $('.scorecard').children().show();
+            $('#complete-scorecard').hide();
+            $('#finish-button').removeClass('finish-clicked');
+            var activeHoleButton = $('.hole-button.active');
+            if (activeHoleButton.length > 0) {
+                var count = parseInt($('#throw-count').text());
+                var scorecardId = $('.throws').data('scorecard-id');
+                var holeNumber = activeHoleButton.data('hole-number');
+
+                // Wait for the throw count update AJAX request to be completed
+                $.ajax({
+                    url: '/update_throw_count',
+                    method: 'POST',
+                    data: {
+                        scorecard_id: scorecardId,
+                        hole_number: parseInt(holeNumber, 10),  // Convert hole number to an integer
+                        throw_count: count,
+                    }
+                }).done(function(response) {  // When the Ajax request is completed
+                    if(response.result === 'success'){
+                        changeHole(e.currentTarget);  // Change hole only after the Ajax request has completed
+                    }
+                });
+            } else {
+                changeHole(e.currentTarget);
+            }
+        });
+      });
+    
+      function updateThrowCount() {
+          var scorecardId = $('.throws').data('scorecard-id');
+          var holeNumber = $('.throws').data('hole-number'); // Use 'data-hole-number' of the '.throws' div instead of URL
+      
+          $.get('/get_throw_count', { scorecard_id: scorecardId, hole_number: holeNumber }, function(data) {
+              $('#throw-count').text(data.throw_count);
+          });
+      }
+      updateThrowCount();
+      function updateScore() {
+          var scorecardId = $('.throws').data('scorecard-id');
+          $.get('/get_total_score', { scorecard_id: scorecardId }, function(data) {
+              var score = data.total_score;
+              var scoreDisplay = 'E';
+              if (score > 0) {
+                  scoreDisplay = '+' + score;
+              } else if (score < 0) {
+                  scoreDisplay = score;
+              }
+              $('#score').text('(' + scoreDisplay + ')');
+          });
+      }
+      updateScore();
+      function changeHole(holeButton) {
+        // Remove 'active' class from all hole buttons
+        $('.hole-button').removeClass('active');
+        // Add 'active' class to the clicked button
+        $(holeButton).addClass('active');
+
+        var holeNumber = $(holeButton).data('hole-number');
+        var scorecardId = $('.throws').data('scorecard-id');
+
+        // Update the 'data-hole-number' attribute of the '.throws' div
+        $('.throws').data('hole-number', holeNumber);
+        var courseId = $('.throws').data('course-id');
+        $.get('/get_hole_info', { course_id: courseId, hole_number: holeNumber }, function(data) {
+            // update hole number, distance, and par
+            $('h3').text('Hole: ' + data.hole_number);
+            $('.distance').text('Distance: ' + data.distance + ' m');
+            $('.par').text('Par: ' + data.par);
+        });
+
+        // The throw count should be updated only after hole has been changed
+        updateThrowCount();
+      }
+      (function () {
+          var holesContainer = document.getElementById('holes-container');
+          var holes = document.querySelector('.holes');
+          var isDown = false;
+          var startX;
+          var scrollLeft;
+      
+          holesContainer.addEventListener('mousedown', (e) => {
+              isDown = true;
+              startX = e.pageX;
+              scrollLeft = holes.scrollLeft;
+          });
+          holesContainer.addEventListener('mouseleave', () => {
+              isDown = false;
+          });
+          holesContainer.addEventListener('mouseup', () => {
+              isDown = false;
+          });
+          holesContainer.addEventListener('mousemove', (e) => {
+              if(!isDown) return;
+              e.preventDefault();
+              var x = e.pageX;
+              var walk = (x - startX) * 3; //scroll-fast
+              holes.scrollLeft = scrollLeft - walk;
+          });
+      })();
+    </script>
+{% endblock %}

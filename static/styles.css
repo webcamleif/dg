@@ -1,0 +1,309 @@
+html, body {
+    height: 100%;
+    background-color: #343a40;
+    color: #fff;
+}
+.navbar {
+    background-color: #343a40;
+    flex-wrap: nowrap;
+}
+
+.starter-template {
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+/* Limit form width */
+.form-width-custom {
+    max-width: 600px;
+    margin: auto;
+}
+
+.container-fluid {
+    padding: 0;
+    margin: 0;
+}
+
+.nav-link {
+    color: #fff;
+}
+
+.nav-link:hover {
+    color: #ccc;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.8em;
+    }
+
+    .navbar .nav-link {
+        font-size: 0.8em;
+        padding: 0 5px;
+    }
+}
+
+.table-responsive td, .table-responsive th {
+    padding: 0.25rem;
+    text-align: center;
+}
+
+.table-responsive table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.scorecard {
+    border: 1px solid black;
+    margin: 0 auto;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    width: 95%; /* Adjust as needed */
+    max-width: 600px;
+    min-height: 650px; /* Changed from height to min-height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+    color: #000;
+    position: relative;
+}
+.scorecard .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.scorecard .header-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.scorecard .hole-details {
+    display: flex;
+    justify-content: space-between;
+    width: 100%; /* Adjust as needed */
+}
+
+.scorecard .header-right {
+    align-self: flex-start;
+}
+
+.scorecard .map {
+    width: 100%;
+    flex-grow: 1;
+}
+/* Styles for the complete scorecard */
+#complete-scorecard {
+    width: 100%;
+    overflow-x: auto; /* adds horizontal scroll if necessary */
+    border: 1px solid #000; /* black border around the scorecard */
+    border-radius: 5px; /* rounded corners */
+}
+
+#complete-scorecard table {
+    border-collapse: collapse; /* removes space between cells */
+    text-align: left; /* left aligns the text */
+}
+@media (max-width: 600px) {
+    #complete-scorecard td, #complete-scorecard th {
+        font-size: 0.8rem; /* adjust as needed */
+    }
+}
+
+#complete-scorecard th,
+#complete-scorecard td {
+    padding: 5px; /* space inside cells */
+    border: 1px solid #000; /* black border around cells */
+    font-size: 1.5vw; /* adjust as needed */
+}
+
+#complete-scorecard thead th {
+    background-color: #f5f5f5; /* light grey background for headers */
+}
+
+#complete-scorecard tbody td:first-child {
+    font-weight: bold; /* makes the first cell in each row bold */
+}
+
+/* makes the first two columns in the table take up less space */
+#front-nine td:nth-child(-n+1),
+#front-nine th:nth-child(-n+1),
+#back-nine td:nth-child(-n+1),
+#back-nine th:nth-child(-n+1) {
+    width: 1%; 
+    white-space: nowrap;
+}
+
+
+.course-info, .hole-map, .player-info, .controls {
+    margin: 5px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.hole-selector {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+    padding: 10px;
+    flex-wrap: wrap;
+}
+
+.hole-selector a {
+    color: #000;
+    margin: 5px;
+    text-decoration: none;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.hole-selector a:hover {
+    background-color: #ccc;
+    color: #343a40;
+}
+.holes {
+    display: flex;
+    overflow-x: auto;
+    justify-content: space-between;
+    padding: 0;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #fff; /* For modern browsers */
+    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+    margin-top: 20px;
+}
+.holes::-webkit-scrollbar { 
+    display: none; /* For Chrome, Safari and Opera */
+}
+.holes::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color of the track */
+}
+
+.holes::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scroll thumb */
+}
+
+.holes::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color when hovered */
+}
+.hole-button, .finish-button {
+    color: #fff;
+    margin: 0;
+    text-decoration: none;
+    border-radius: 0;
+    background-color: #343a40;
+    width: 80px;
+    text-align: center;
+
+}
+
+.hole-button:hover, .finish-button:hover {
+    background-color: #ccc;
+    color: #343a40;
+}
+
+.hole-button.active .finish-button.active{
+    background-color: #ccc;
+    color: #343a40;
+}
+
+.holes .btn {
+    flex: 0 0 auto;
+}
+
+/* Remove right margin for last button */
+.holes .btn:last-child {
+    margin-right: 0;
+}
+.holes-container {
+    width: 100%;  /* This makes the holes-container span the entire width */
+    position: absolute;  /* This positions the holes-container relative to the nearest positioned ancestor (the scorecard in this case) */
+    bottom: 0;  /* This positions the holes-container at the bottom of the scorecard */
+}
+
+/* Rest of your CSS */
+.container {
+    height: calc(100 * var(--vh));
+    justify-content: center;
+    align-items: center;
+}
+
+.login-template {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.login-template h1 {
+    margin-bottom: 2rem; /* Adjust as per your requirement */
+    text-align: center;
+}
+@media (max-width: 600px) {
+    .login-template h1 {
+        font-size: 2rem; /* Adjust this value as needed */
+    }
+}
+
+.social-login-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;  /* Space between buttons */
+}
+
+.social-login-buttons .btn {
+    width: 200px;  /* Set a fixed width for the buttons */
+    display: flex;  /* Align the text and the icon */
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-danger {
+    background-color: #DD4B39;
+    border-color: #DD4B39;
+}
+
+.btn-danger:hover {
+    background-color: #E74B37;
+    border-color: #E74B37;
+}
+
+.btn-primary {
+    background-color: #3b5998;
+    border-color: #3b5998;
+}
+
+.btn-primary:hover {
+    background-color: #4A69A1;
+    border-color: #4A69A1;
+}
+.throws {
+    margin-bottom: 40px;
+    position: right;
+    left: 20px;
+    bottom: 20px;
+}
+.user-score-throws {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+.user-score {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* If you want the username and score to be left-aligned */
+    justify-content: center; /* Vertically centers the content if there's extra space */
+    height: 100%;
+}
+

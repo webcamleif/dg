@@ -1,0 +1,144 @@
+<!-- courses.html -->
+{% extends "base.html" %}
+{% block content %}
+    <div class="starter-template form-width-custom">
+        <h1>Available Courses</h1>
+        <ul class="list-group">
+            {% for course in courses %}
+            <li class="list-group-item d-flex justify-content-between align-items-center" id="course-{{ course.id }}" 
+            data-latitude="{{ course.latitude }}" data-longitude="{{ course.longitude }}">
+                {{ course.name }}
+                <span class="d-flex">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#courseModal-{{ course.id }}">View</button>
+                    <span class="badge badge-primary badge-pill ml-2 distance" data-latitude="{{ course.latitude }}" data-longitude="{{ course.longitude }}">Calculating...</span>
+                </span>
+            </li>
+            <!-- Modal -->
+            <div class="modal" tabindex="-1" role="dialog" id="courseModal-{{ course.id }}" style="display: none;">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ course.name }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="map-{{ course.id }}" style="height: 400px; width: 100%;"></div>
+                        <p>Holes: {{ course.holes }} - Par: {{ course.par }} - Total Distance: {{ course.total_distance }} m</p>
+                        <div class="table-responsive">
+                            {% set row_break = 9 %}
+                            {% for i in range(((course.holes / row_break) + 0.9999)|int) %}
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <th class="limited-cell">Hole</th>
+                                            {% for hole in course.hole_info[i*row_break: (i+1)*row_break] %}
+                                                <td class="limited-cell">{{ hole.hole_number }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                        <tr>
+                                            <th class="limited-cell">Dist</th>
+                                            {% for hole in course.hole_info[i*row_break: (i+1)*row_break] %}
+                                                <td class="limited-cell">{{ hole.distance }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                        <tr>
+                                            <th class="limited-cell">Par</th>
+                                            {% for hole in course.hole_info[i*row_break: (i+1)*row_break] %}
+                                                <td class="limited-cell">{{ hole.par }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                {% if not loop.last %}
+                                    <hr/>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                $(document).ready(function() {
+                    var userMarker;
+
+                    var userIcon = L.icon({
+                        iconUrl: '{{ url_for('static', filename='images/user-icon.png') }}',
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 32],
+                        popupAnchor: [0, -32]
+                    });
+
+                    var courseIcon = L.icon({
+                        iconUrl: '{{ url_for('static', filename='images/course-icon.png') }}',
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 32],
+                        popupAnchor: [0, -32]
+                    });
+
+                    $('#courseModal-{{ course.id }}').on('shown.bs.modal', function(e) {
+                        var courseLat = $('#course-{{ course.id }}').data('latitude');
+                        var courseLon = $('#course-{{ course.id }}').data('longitude');
+                        var map = L.map('map-{{ course.id }}').setView([courseLat, courseLon], 13);
+
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        }).addTo(map);
+
+                        var courseMarker = L.marker([courseLat, courseLon], {icon: courseIcon}).addTo(map);
+                        courseMarker.bindPopup("<b>Course Location</b>").openPopup();
+
+                        if (navigator.geolocation) {
+                            navigator.geolocation.watchPosition(function(position) {
+                                var latlng = [position.coords.latitude, position.coords.longitude];
+
+                                if (userMarker) {
+                                    map.removeLayer(userMarker);
+                                }
+
+                                userMarker = L.marker(latlng, {icon: userIcon}).addTo(map);
+                            });
+                        }
+                    });
+                });
+            </script>
+            {% endfor %}
+        </ul>
+    </div>
+    <script>
+        function degreesToRadians(degrees) {
+            return degrees * Math.PI / 180;
+        }
+
+        function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
+            var earthRadiusKm = 6371;
+
+            var dLat = degreesToRadians(lat2-lat1);
+            var dLon = degreesToRadians(lon2-lon1);
+
+            lat1 = degreesToRadians(lat1);
+            lat2 = degreesToRadians(lat2);
+
+            var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return earthRadiusKm * c;
+        }
+
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+
+            document.querySelectorAll('.distance').forEach(function(el) {
+                var courseLat = parseFloat(el.dataset.latitude);
+                var courseLon = parseFloat(el.dataset.longitude);
+
+                var distance = distanceInKmBetweenEarthCoordinates(lat, lon, courseLat, courseLon);
+                el.textContent = distance.toFixed(2) + ' km';
+            });
+        });
+    </script>
+{% endblock %}
+
