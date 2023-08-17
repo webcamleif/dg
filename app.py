@@ -12,6 +12,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from flask_login import login_required
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from math import radians, cos, sin, asin, sqrt
+from PIL import Image, ImageDraw, ImageFont
 import os, secrets, logging
 
 photos = UploadSet('photos', IMAGES)
@@ -62,6 +63,18 @@ def populate_vallentuna_course():
             db.session.add(hole)
 
         db.session.commit()
+
+def generate_default_profile_picture(username):
+    width, height = 150, 150
+    image = Image.new('RGB', (width, height), color='lightgray')
+    draw = ImageDraw.Draw(image)
+    font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"  # Update the font path
+    font = ImageFont.truetype(font_path, size=80)
+    text = username[0].upper()
+    text_width, text_height = draw.textsize(text, font=font)  # Corrected method name
+    position = ((width - text_width) / 2, (height - text_height) / 2)
+    draw.text(position, text, fill='black', font=font)
+    image.save(f'static/images/{username}.png')
 
 def haversine(lon1, lat1, lon2, lat2):
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
@@ -317,6 +330,7 @@ def create_display_name():
         email = request.args.get('email')
         if len(username) <= 10:
             if not User.query.filter_by(username=username).first():
+                generate_default_profile_picture(username)
                 user = User(username=username, email=email)
                 db.session.add(user)
                 db.session.commit()

@@ -2,7 +2,7 @@
 {% block content %}
 <div class="profile-container">
     <h2>{{ user.username }}</h2>
-    <img src="{{ url_for('static', filename='images/' + user.profile_pic) }}" class="img-thumbnail profile-image">
+    <img src="{{ url_for('static', filename='images/' + (user.profile_pic if user.profile_pic else user.display_name + '.png')) }}" class="img-thumbnail profile-image">
     <form method="POST" enctype="multipart/form-data" class="profile-form">
         <div class="form-group">
             <label for="photo">Change Profile Picture</label>
