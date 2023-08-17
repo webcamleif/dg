@@ -15,7 +15,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
     oauth = db.relationship('OAuth', backref='user', lazy=True)
-    profile_pic = db.Column(db.String(20), nullable=False, default='default.jpg')
+    profile_pic = db.Column(db.String(20), nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

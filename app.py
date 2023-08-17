@@ -69,10 +69,10 @@ def generate_default_profile_picture(username):
     image = Image.new('RGB', (width, height), color='lightgray')
     draw = ImageDraw.Draw(image)
     font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"  # Update the font path
-    font = ImageFont.truetype(font_path, size=80)
+    font = ImageFont.truetype(font_path, size=70)  # Adjusted font size
     text = username[0].upper()
-    text_width, text_height = draw.textsize(text, font=font)  # Corrected method name
-    position = ((width - text_width) / 2, (height - text_height) / 2)
+    text_width, text_height = draw.textsize(text, font=font)
+    position = ((width - text_width) / 2, (height - text_height) / 2 - 10)  # Adjusted position
     draw.text(position, text, fill='black', font=font)
     image.save(f'static/images/{username}.png')
 
@@ -331,7 +331,7 @@ def create_display_name():
         if len(username) <= 10:
             if not User.query.filter_by(username=username).first():
                 generate_default_profile_picture(username)
-                user = User(username=username, email=email)
+                user = User(username=username, email=email, profile_pic=f'{username}.png')
                 db.session.add(user)
                 db.session.commit()
                 login_user(user)
