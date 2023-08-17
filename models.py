@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from sqlalchemy import JSON
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -34,11 +35,12 @@ class User(UserMixin, db.Model):
 class Scorecard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)  # new line
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     active = db.Column(db.Boolean, default=False, nullable=False)
     total_score = db.Column(db.Integer, nullable=True)
+    date_played = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     user = db.relationship('User', backref=db.backref('scorecards', lazy=True))
-    course = db.relationship('Course', backref=db.backref('scorecards', lazy=True))  # new line
+    course = db.relationship('Course', backref=db.backref('scorecards', lazy=True))
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
