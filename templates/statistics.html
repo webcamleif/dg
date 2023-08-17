@@ -18,5 +18,44 @@
         {% endfor %}
     </tbody>
 </table>
+
+<h2>Your Best Rounds</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Course Name</th>
+            <th>Best Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for best_round in best_rounds %}
+        <tr>
+            <td>{{ best_round.course_name }}</td>
+            <td>{{ best_round.best_score }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Your Last 5 Rounds</h2>
+{% for last_five in last_five_rounds %}
+<h3>{{ last_five.course_name }}</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Date Played</th>
+            <th>Total Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for score in last_five.scores %}
+        <tr>
+            <td>{{ score.date_played }}</td>
+            <td>{{ score.total_score }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endfor %}
 {% endblock %}
 

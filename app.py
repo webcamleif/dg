@@ -334,6 +334,9 @@ def create_display_name():
 def statistics():
     scorecards = Scorecard.query.filter_by(user_id=current_user.id).all()
     scores = []
+    best_rounds = []
+    last_five_rounds = []
+
     for scorecard in scorecards:
         scorecard_details = ScorecardDetail.query.filter_by(scorecard_id=scorecard.id).all()
         total_score = 0
@@ -342,7 +345,22 @@ def statistics():
             total_score += scorecard_detail.throws - hole.par
         course = Course.query.get(scorecard.course_id)
         scores.append({'course_name': course.name, 'total_score': total_score})
-    return render_template('statistics.html', scores=scores)
+
+    # Get a list of all the courses the user has played
+    course_ids = {scorecard.course_id for scorecard in scorecards}
+    for course_id in course_ids:
+        course = Course.query.get(course_id)
+        # Query the database to get the scorecard with the lowest total score for each course
+        best_round = db.session.query(Scorecard).filter_by(user_id=current_user.id, course_id=course_id).order_by(Scorecard.total_score.asc()).first()
+        if best_round:
+            best_rounds.append({'course_name': course.name, 'best_score': best_round.total_score})
+
+        # Query the database to get the last 5 scorecards for each course
+        last_five = db.session.query(Scorecard).filter_by(user_id=current_user.id, course_id=course_id).order_by(Scorecard.date_played.desc()).limit(5).all()
+        last_five_scores = [{'date_played': scorecard.date_played, 'total_score': scorecard.total_score} for scorecard in last_five]
+        last_five_rounds.append({'course_name': course.name, 'scores': last_five_scores})
+
+    return render_template('statistics.html', scores=scores, best_rounds=best_rounds, last_five_rounds=last_five_rounds)
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
