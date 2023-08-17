@@ -306,4 +306,69 @@ html, body {
     justify-content: center; /* Vertically centers the content if there's extra space */
     height: 100%;
 }
+/* Statistics Page */
+.statistics-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.statistics-table th, .statistics-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.statistics-table th {
+    background-color: #f2f2f2;
+}
+
+/* Responsive table */
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile view */
+@media (max-width: 768px) {
+    .statistics-table th, .statistics-table td {
+        padding: 5px;
+        font-size: 14px;
+    }
+}
+
+/* Profile Page */
+.profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.profile-image {
+    width: 150px; /* Set a fixed width */
+    height: 150px; /* Set a fixed height */
+    object-fit: cover; /* Resize the image to cover the container */
+    border-radius: 50%; /* Make the image round */
+}
+.profile-form {
+    margin-top: 20px;
+}
+
+/* Mobile view */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 10px;
+    }
+
+    .profile-form {
+        font-size: 14px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+}
 
