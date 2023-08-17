@@ -265,26 +265,32 @@
       }
       updateScore();
       function changeHole(holeButton) {
-        // Remove 'active' class from all hole buttons
-        $('.hole-button').removeClass('active');
-        // Add 'active' class to the clicked button
-        $(holeButton).addClass('active');
-
-        var holeNumber = $(holeButton).data('hole-number');
-        var scorecardId = $('.throws').data('scorecard-id');
-
-        // Update the 'data-hole-number' attribute of the '.throws' div
-        $('.throws').data('hole-number', holeNumber);
-        var courseId = $('.throws').data('course-id');
-        $.get('/get_hole_info', { course_id: courseId, hole_number: holeNumber }, function(data) {
-            // update hole number, distance, and par
-            $('h3').text('Hole: ' + data.hole_number);
-            $('.distance').text('Distance: ' + data.distance + ' m');
-            $('.par').text('Par: ' + data.par);
-        });
-
-        // The throw count should be updated only after hole has been changed
-        updateThrowCount();
+          // Remove 'active' class from all hole buttons
+          $('.hole-button').removeClass('active');
+          // Add 'active' class to the clicked button
+          $(holeButton).addClass('active');
+      
+          var holeNumber = $(holeButton).data('hole-number');
+          var scorecardId = $('.throws').data('scorecard-id');
+      
+          // Update the 'data-hole-number' attribute of the '.throws' div
+          $('.throws').data('hole-number', holeNumber);
+          var courseId = $('.throws').data('course-id');
+          $.get('/get_hole_info', { course_id: courseId, hole_number: holeNumber }, function(data) {
+              // update hole number, distance, and par
+              $('h3').text('Hole: ' + data.hole_number);
+              $('.distance').text('Distance: ' + data.distance + ' m');
+              $('.par').text('Par: ' + data.par);
+          });
+      
+          // Fetch the throw count for the selected hole from the server
+          $.get('/get_throw_count', { scorecard_id: scorecardId, hole_number: holeNumber }, function(data) {
+              if (data.result === 'failure') {
+                  $('#throw-count').text('0'); // Set throw count to 0 if there is no entry in the ScorecardDetail table for the specified hole
+              } else {
+                  $('#throw-count').text(data.throw_count);
+              }
+          });
       }
       (function () {
           var holesContainer = document.getElementById('holes-container');
