@@ -36,7 +36,7 @@ class Scorecard(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)  # new line
     active = db.Column(db.Boolean, default=False, nullable=False)
-
+    total_score = db.Column(db.Integer, nullable=True)
     user = db.relationship('User', backref=db.backref('scorecards', lazy=True))
     course = db.relationship('Course', backref=db.backref('scorecards', lazy=True))  # new line
 

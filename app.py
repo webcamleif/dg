@@ -297,9 +297,17 @@ def end_round():
     scorecard_id = request.form.get('scorecard_id')
     scorecard = Scorecard.query.get(scorecard_id)
     if scorecard and scorecard.user_id == current_user.id:
+        scorecard_details = ScorecardDetail.query.filter_by(scorecard_id=scorecard.id).all()
+        total_score = 0
+        for scorecard_detail in scorecard_details:
+            hole = Hole.query.get(scorecard_detail.hole_id)
+            total_score += scorecard_detail.throws - hole.par
+        
+        # Save the total score to the scorecard (assuming a new attribute "total_score" in Scorecard model)
+        scorecard.total_score = total_score
         scorecard.active = False
         db.session.commit()
-        return jsonify({'result': 'success'})
+        return jsonify({'result': 'success', 'total_score': total_score})
     return jsonify({'result': 'error', 'message': 'Scorecard not found or user not authorized'})
 
 @app.route('/create_display_name', methods=['GET', 'POST'])
@@ -324,12 +332,17 @@ def create_display_name():
 @app.route('/statistics')
 @login_required
 def statistics():
-    if 'user_id' in session:
-        # Implementation of creating a new scorecard goes here
-        pass
-    else:
-        flash('Please log in to view this page.')
-        return redirect(url_for('login'))
+    scorecards = Scorecard.query.filter_by(user_id=current_user.id).all()
+    scores = []
+    for scorecard in scorecards:
+        scorecard_details = ScorecardDetail.query.filter_by(scorecard_id=scorecard.id).all()
+        total_score = 0
+        for scorecard_detail in scorecard_details:
+            hole = Hole.query.get(scorecard_detail.hole_id)
+            total_score += scorecard_detail.throws - hole.par
+        course = Course.query.get(scorecard.course_id)
+        scores.append({'course_name': course.name, 'total_score': total_score})
+    return render_template('statistics.html', scores=scores)
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
