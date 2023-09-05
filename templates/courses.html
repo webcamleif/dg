@@ -10,7 +10,7 @@
                 {{ course.name }}
                 <span class="d-flex">
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#courseModal-{{ course.id }}">View</button>
-                    <span class="badge badge-primary badge-pill ml-2 distance" data-latitude="{{ course.latitude }}" data-longitude="{{ course.longitude }}">Calculating...</span>
+                    <button class="btn btn-primary ml-2 distance" data-latitude="{{ course.latitude }}" data-longitude="{{ course.longitude }}">Calculating...</button>
                 </span>
             </li>
             <!-- Modal -->
