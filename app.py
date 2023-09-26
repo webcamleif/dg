@@ -410,13 +410,17 @@ def send_request():
     user_id = request.json['user_id']
     user = User.query.get(user_id)
     existing_request = FriendRequest.query.filter_by(sender=current_user, receiver=user).first()
-    if user and not existing_request:
+    existing_friendship = Friendship.query.filter(
+        (Friendship.user1 == current_user) & (Friendship.user2 == user) |
+        (Friendship.user2 == current_user) & (Friendship.user1 == user)
+    ).first()
+    if user and not existing_request and not existing_friendship:
         friend_request = FriendRequest(sender=current_user, receiver=user)
         db.session.add(friend_request)
         db.session.commit()
         return jsonify(success=True)
     else:
-        return jsonify(success=False, error='Friend request already sent or user not found')
+        return jsonify(success=False, error='Friend request already sent, user not found, or already friends')
 
 @app.route('/remove_friend/<int:user_id>', methods=['POST'])
 @login_required

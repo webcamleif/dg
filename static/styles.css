@@ -408,4 +408,17 @@ tr:hover {
 .statistics-heading {
     text-align: center;
 }
+/* Styles for friend list */
+.friend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.friend-item img {
+    border-radius: 50%;  /* Makes the image round */
+    width: 50px;         /* Adjust width as needed */
+    height: 50px;        /* Adjust height as needed */
+    margin-right: 10px;  /* Space between image and name */
+}
 

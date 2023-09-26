@@ -17,8 +17,8 @@
     <h3>Friends</h3>
     <ul>
         {% for friend in friends %}
-        <li>
-            <img src="{{ url_for('static', filename='profile_pics/' + friend.profile_pic) }}" alt="{{ friend.username }}'s Profile Picture">
+        <li class="friend-item">
+            <img src="{{ url_for('static', filename='images/' + friend.profile_pic) }}" alt="{{ friend.username }}'s Profile Picture">
             {{ friend.username }}
             <form method="POST" action="{{ url_for('remove_friend', user_id=friend.id) }}">
                 <button type="submit">Remove Friend</button>
