@@ -10,6 +10,30 @@
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
+    <form method="POST" action="{{ url_for('search_users') }}">
+        <input type="text" name="query" placeholder="Search for users" required>
+        <button type="submit">Search</button>
+    </form>
+    <h3>Friends</h3>
+    <ul>
+        {% for friend in friends %}
+        <li>{{ friend.username }}</li>
+        {% endfor %}
+    </ul>
+    <h3>Friend Requests</h3>
+    <ul>
+        {% for request in friend_requests %}
+        <li>
+            {{ request.sender.username }} wants to be friends.
+            <form method="POST" action="{{ url_for('accept_request', request_id=request.id) }}">
+                <button type="submit">Accept</button>
+            </form>
+            <form method="POST" action="{{ url_for('decline_request', request_id=request.id) }}">
+                <button type="submit">Decline</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
     <a class="btn btn-danger mt-3" href="{{ url_for('logout') }}">Logout</a>
 </div>
 {% endblock %}

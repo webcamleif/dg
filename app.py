@@ -385,8 +385,56 @@ def profile():
         db.session.commit()
         flash("Profile picture has been updated!")
         return redirect(url_for('profile'))
-    return render_template('profile.html', user=current_user)
+        friendships = Friendship.query.filter(
+            (Friendship.user1 == current_user) | (Friendship.user2 == current_user)
+        ).all()
+        friends = [
+            friendship.user1 if friendship.user1 != current_user else friendship.user2
+            for friendship in friendships
+        ]
+    return render_template('profile.html', user=current_user, friends=friends)
 
+@app.route('/search_users', methods=['GET', 'POST'])
+@login_required
+def search_users():
+    if request.method == 'POST':
+        query = request.form['query']
+        users = User.query.filter(User.username.like(f'%{query}%')).all()
+        return render_template('search_results.html', users=users)
+    return render_template('search_users.html')
+
+@app.route('/send_request/<int:user_id>', methods=['POST'])
+@login_required
+def send_request(user_id):
+    user = User.query.get(user_id)
+    if user:
+        friend_request = FriendRequest(sender=current_user, receiver=user)
+        db.session.add(friend_request)
+        db.session.commit()
+        flash('Friend request sent!')
+    return redirect(url_for('profile'))
+
+@app.route('/accept_request/<int:request_id>', methods=['POST'])
+@login_required
+def accept_request(request_id):
+    request = FriendRequest.query.get(request_id)
+    if request and request.receiver == current_user:
+        friendship = Friendship(user1=request.sender, user2=request.receiver)
+        db.session.add(friendship)
+        db.session.delete(request)
+        db.session.commit()
+        flash('Friend request accepted!')
+    return redirect(url_for('profile'))
+
+@app.route('/decline_request/<int:request_id>', methods=['POST'])
+@login_required
+def decline_request(request_id):
+    request = FriendRequest.query.get(request_id)
+    if request and request.receiver == current_user:
+        db.session.delete(request)
+        db.session.commit()
+        flash('Friend request declined.')
+    return redirect(url_for('profile'))
 
 @app.route("/logout")
 def logout():
