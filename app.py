@@ -396,14 +396,12 @@ def profile():
     
     return render_template('profile.html', user=current_user, friends=friends)
 
-@app.route('/search_users', methods=['GET', 'POST'])
+@app.route('/search_users', methods=['POST'])
 @login_required
 def search_users():
-    if request.method == 'POST':
-        query = request.form['query']
-        users = User.query.filter(User.username.like(f'%{query}%')).all()
-        return render_template('search_results.html', users=users)
-    return render_template('search_users.html')
+    query = request.json['query']
+    users = User.query.filter(User.username.like(f'%{query}%')).all()
+    return jsonify(users=[user.serialize() for user in users])
 
 @app.route('/send_request/<int:user_id>', methods=['POST'])
 @login_required

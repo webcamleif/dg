@@ -10,8 +10,8 @@
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
-    <form method="POST" action="{{ url_for('search_users') }}">
-        <input type="text" name="query" placeholder="Search for users" required>
+    <form onsubmit="searchUsers(); return false;">
+        <input type="text" id="query" name="query" placeholder="Search for users" required>
         <button type="submit">Search</button>
     </form>
     <h3>Friends</h3>
@@ -36,5 +36,47 @@
     </ul>
     <a class="btn btn-danger mt-3" href="{{ url_for('logout') }}">Logout</a>
 </div>
+<!-- Search Results Modal -->
+<div class="modal fade" id="searchResultsModal" tabindex="-1" role="dialog" aria-labelledby="searchResultsModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="searchResultsModalLabel">Search Results</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="searchResultsBody">
+        <!-- Search results will be inserted here -->
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    function searchUsers() {
+        var query = document.getElementById('query').value;
+        fetch('/search_users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({query: query}),
+        })
+        .then(response => response.json())
+        .then(data => {
+            var searchResultsBody = document.getElementById('searchResultsBody');
+            searchResultsBody.innerHTML = '';  // Clear any previous search results
+            data.users.forEach(user => {
+                searchResultsBody.innerHTML += `<p>${user.username} <button onclick="sendRequest(${user.id})">Add Friend</button></p>`;
+            });
+            $('#searchResultsModal').modal('show');  // Show the modal
+        });
+    }
+    
+    function sendRequest(userId) {
+        // Implement function to send friend request
+    }
+</script>
+
 {% endblock %}
 
