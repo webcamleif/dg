@@ -32,6 +32,12 @@ class User(UserMixin, db.Model):
             db.session.commit()
         return user
 
+    def serialize(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+        }
+
 class Scorecard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
