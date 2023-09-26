@@ -393,8 +393,9 @@ def profile():
         friendship.user1 if friendship.user1 != current_user else friendship.user2
         for friendship in friendships
     ]
-    
-    return render_template('profile.html', user=current_user, friends=friends)
+    incoming_requests = FriendRequest.query.filter_by(receiver=current_user).all()
+
+    return render_template('profile.html', user=current_user, friends=friends, incoming_requests=incoming_requests)
 
 @app.route('/search_users', methods=['POST'])
 @login_required

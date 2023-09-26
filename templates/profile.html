@@ -22,7 +22,7 @@
     </ul>
     <h3>Friend Requests</h3>
     <ul>
-        {% for request in friend_requests %}
+        {% for request in incoming_requests %}
         <li>
             {{ request.sender.username }} wants to be friends.
             <form method="POST" action="{{ url_for('accept_request', request_id=request.id) }}">
