@@ -372,3 +372,36 @@ html, body {
     }
 }
 
+h1, h2, h3 {
+    margin-bottom: 20px;
+}
+
+table {
+    margin-bottom: 20px;
+}
+
+td, th {
+    padding: 10px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #ddd;
+}
+
+table {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+tr {
+    transition: background-color 0.3s;
+}
+
+tr:hover {
+    background-color: #243a40;
+}
+

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h1>Statistics</h1>
 <h2>Your Best Rounds</h2>
 <table>
     <thead>
@@ -32,7 +33,7 @@
     <tbody>
         {% for score in last_five.scores %}
         <tr>
-            <td>{{ score.date_played }}</td>
+            <td>{{ score.date_played.strftime('%Y-%m-%d') }}</td>
             <td>{{ score.total_score }}</td>
         </tr>
         {% endfor %}
