@@ -385,13 +385,15 @@ def profile():
         db.session.commit()
         flash("Profile picture has been updated!")
         return redirect(url_for('profile'))
-        friendships = Friendship.query.filter(
-            (Friendship.user1 == current_user) | (Friendship.user2 == current_user)
-        ).all()
-        friends = [
-            friendship.user1 if friendship.user1 != current_user else friendship.user2
-            for friendship in friendships
-        ]
+    
+    friendships = Friendship.query.filter(
+        (Friendship.user1 == current_user) | (Friendship.user2 == current_user)
+    ).all()
+    friends = [
+        friendship.user1 if friendship.user1 != current_user else friendship.user2
+        for friendship in friendships
+    ]
+    
     return render_template('profile.html', user=current_user, friends=friends)
 
 @app.route('/search_users', methods=['GET', 'POST'])
