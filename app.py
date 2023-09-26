@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, current_app, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import User, Scorecard, Course, Hole, db, setup_db, ScorecardDetail
+from models import User, Scorecard, Course, Hole, db, setup_db, ScorecardDetail, Friendship, FriendRequest
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from models import OAuth
