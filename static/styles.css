@@ -404,4 +404,7 @@ tr {
 tr:hover {
     background-color: #243a40;
 }
+.statistics-heading {
+    text-align: center;
+}
 
