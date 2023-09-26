@@ -401,7 +401,7 @@ def profile():
 @login_required
 def search_users():
     query = request.json['query']
-    users = User.query.filter(User.username.like(f'%{query}%')).all()
+    users = User.query.filter(User.username.like(f'%{query}%'), User.id != current_user.id).all()
     return jsonify(users=[user.serialize() for user in users])
 
 @app.route('/send_request', methods=['POST'])
@@ -409,13 +409,27 @@ def search_users():
 def send_request():
     user_id = request.json['user_id']
     user = User.query.get(user_id)
-    if user:
+    existing_request = FriendRequest.query.filter_by(sender=current_user, receiver=user).first()
+    if user and not existing_request:
         friend_request = FriendRequest(sender=current_user, receiver=user)
         db.session.add(friend_request)
         db.session.commit()
         return jsonify(success=True)
     else:
-        return jsonify(success=False, error='User not found')
+        return jsonify(success=False, error='Friend request already sent or user not found')
+
+@app.route('/remove_friend/<int:user_id>', methods=['POST'])
+@login_required
+def remove_friend(user_id):
+    friendship = Friendship.query.filter(
+        (Friendship.user1 == current_user) & (Friendship.user2_id == user_id) |
+        (Friendship.user2 == current_user) & (Friendship.user1_id == user_id)
+    ).first()
+    if friendship:
+        db.session.delete(friendship)
+        db.session.commit()
+        flash('Friend removed.')
+    return redirect(url_for('profile'))
 
 @app.route('/accept_request/<int:request_id>', methods=['POST'])
 @login_required
