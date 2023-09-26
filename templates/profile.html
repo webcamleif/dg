@@ -74,8 +74,23 @@
     }
     
     function sendRequest(userId) {
-        // Implement function to send friend request
+        fetch('/send_request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({user_id: userId}),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Friend request sent!');
+            } else {
+                alert('Failed to send friend request: ' + data.error);
+            }
+        });
     }
+
 </script>
 
 {% endblock %}

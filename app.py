@@ -403,16 +403,18 @@ def search_users():
     users = User.query.filter(User.username.like(f'%{query}%')).all()
     return jsonify(users=[user.serialize() for user in users])
 
-@app.route('/send_request/<int:user_id>', methods=['POST'])
+@app.route('/send_request', methods=['POST'])
 @login_required
-def send_request(user_id):
+def send_request():
+    user_id = request.json['user_id']
     user = User.query.get(user_id)
     if user:
         friend_request = FriendRequest(sender=current_user, receiver=user)
         db.session.add(friend_request)
         db.session.commit()
-        flash('Friend request sent!')
-    return redirect(url_for('profile'))
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False, error='User not found')
 
 @app.route('/accept_request/<int:request_id>', methods=['POST'])
 @login_required
