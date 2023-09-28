@@ -408,17 +408,25 @@ tr:hover {
 .statistics-heading {
     text-align: center;
 }
-/* Styles for friend list */
-.friend-item {
+/* Styles for friend request emojis */
+.friend-request-emoji {
+    background: transparent; /* Make background transparent */
+    border: none;           /* Remove border */
+    cursor: pointer;        /* Change cursor to pointer on hover */
+    font-size: 1.5em;       /* Adjust font size as needed */
+}
+/* Styles for friend request items */
+.friend-request-item {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
 }
-
-.friend-item img {
+/* Styles for profile pictures in friend requests */
+.friend-profile-pic {
     border-radius: 50%;  /* Makes the image round */
     width: 50px;         /* Adjust width as needed */
     height: 50px;        /* Adjust height as needed */
-    margin-right: 10px;  /* Space between image and name */
+    margin-right: 10px;  /* Space between image and text */
 }
 

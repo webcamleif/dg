@@ -5,7 +5,6 @@
     <img src="{{ url_for('static', filename='images/' + (user.profile_pic if user.profile_pic else user.display_name + '.png')) }}" class="img-thumbnail profile-image">
     <form method="POST" enctype="multipart/form-data" class="profile-form">
         <div class="form-group">
-            <label for="photo">Change Profile Picture</label>
             <input type="file" class="form-control-file" id="photo" name="photo">
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
@@ -17,29 +16,34 @@
     <h3>Friends</h3>
     <ul>
         {% for friend in friends %}
-        <li class="friend-item">
-            <img src="{{ url_for('static', filename='images/' + friend.profile_pic) }}" alt="{{ friend.username }}'s Profile Picture">
+        <li class="friend-request-item">
+            <img src="{{ url_for('static', filename='images/' + friend.profile_pic) }}" alt="{{ friend.username }}'s Profile Picture" class="friend-profile-pic">
             {{ friend.username }}
-            <span class="remove-friend-icon" title="Remove Friend">&nbsp&nbsp&nbsp❌</span>
+            <span class="friend-request-emoji" title="Remove Friend">❌</span>
             <form method="POST" action="{{ url_for('remove_friend', user_id=friend.id) }}" style="display: none;">
             </form>
         </li>
         {% endfor %}
     </ul>
-    <h3>Friend Requests</h3>
-    <ul>
-        {% for request in incoming_requests %}
-        <li>
-            {{ request.sender.username }} wants to be friends.
-            <form method="POST" action="{{ url_for('accept_request', request_id=request.id) }}">
-                <button type="submit">✅</button>
-            </form>
-            <form method="POST" action="{{ url_for('decline_request', request_id=request.id) }}">
-                <button type="submit">❌</button>
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
+    {% if incoming_requests %}
+        <h3>Friend Requests</h3>
+        <ul>
+            {% for request in incoming_requests %}
+            <li class="friend-request-item">
+                <img src="{{ url_for('static', filename='images/' + request.sender.profile_pic) }}" alt="{{ request.sender.username }}'s Profile Picture" class="friend-profile-pic">
+                <span>{{ request.sender.username }} wants to be friends.</span>
+                <div>
+                    <form method="POST" action="{{ url_for('accept_request', request_id=request.id) }}" style="display: inline;">
+                        <button type="submit" class="friend-request-emoji" title="Accept">✅</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('decline_request', request_id=request.id) }}" style="display: inline;">
+                        <button type="submit" class="friend-request-emoji" title="Decline">❌</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
     <a class="btn btn-danger mt-3" href="{{ url_for('logout') }}">Logout</a>
 </div>
 <!-- Search Results Modal -->
