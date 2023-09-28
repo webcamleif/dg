@@ -456,15 +456,20 @@ label[for="picture"] {
 
 .button-group {
     display: inline-flex;
-    align-items: center;
+    align-items: center; /* Vertically align the items in the center */
     justify-content: center;
 }
 
-.custom-file-upload {
+.custom-file-upload, #update-button {
+    display: inline-block; /* Treat both elements as inline-block */
+    margin: 0; /* Reset margins */
     padding: .375rem .75rem; /* Adjust padding to match */
     line-height: 1.5; /* Adjust line-height to match */
     vertical-align: middle; /* Align text vertically */
+    border: 1px solid transparent; /* Add a transparent border to ensure consistent sizing */
+    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
+
 #search-bar {
     height: 38px; /* Adjust height to match the Search button */
     border-radius: .2rem; /* Optional: match border-radius with the Search button */
