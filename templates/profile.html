@@ -18,7 +18,7 @@
         </div>
     </form>
     <form onsubmit="searchUsers(); return false;">
-        <input type="text" id="search-bar" name="username" placeholder="Search for users" required>
+        <input type="text" id="query" name="query" placeholder="Search for users" required>
         <button type="submit" class="btn btn-primary" id="search-button">Search</button>
     </form>
     <h3>Friends</h3>
@@ -27,7 +27,7 @@
         <li class="friend-request-item">
             <img src="{{ url_for('static', filename='images/' + friend.profile_pic) }}" alt="{{ friend.username }}'s Profile Picture" class="friend-profile-pic">
             {{ friend.username }}
-            <span class="friend-request-emoji" title="Remove Friend">❌</span>
+            <span class="friend-request-emoji remove-friend-icon" title="Remove Friend">❌</span>
             <form method="POST" action="{{ url_for('remove_friend', user_id=friend.id) }}" style="display: none;">
             </form>
         </li>
