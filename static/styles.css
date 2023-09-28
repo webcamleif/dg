@@ -434,10 +434,12 @@ tr:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px
 }
 
 .custom-file-upload, #update-button {
-    width: 100px;  /* Set a fixed width */
+    width: 110px;  /* Set a fixed width */
     height: 38px;  /* Set a fixed height */
     margin: 0; 
     padding: .375rem .75rem;
