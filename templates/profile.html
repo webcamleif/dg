@@ -17,21 +17,27 @@
             </div>
         </div>
     </form>
-    <form onsubmit="searchUsers(); return false;">
+    <form onsubmit="searchUsers(); return false;" style="margin-bottom: 20px;">
         <input type="text" id="query" name="query" placeholder="Search for users" required>
         <button type="submit" class="btn btn-primary" id="search-button">Search</button>
     </form>
     <h3>Friends</h3>
     <ul>
-        {% for friend in friends %}
-        <li class="friend-request-item">
-            <img src="{{ url_for('static', filename='images/' + friend.profile_pic) }}" alt="{{ friend.username }}'s Profile Picture" class="friend-profile-pic">
-            {{ friend.username }}
-            <span class="friend-request-emoji remove-friend-icon" title="Remove Friend">❌</span>
-            <form method="POST" action="{{ url_for('remove_friend', user_id=friend.id) }}" style="display: none;">
-            </form>
-        </li>
-        {% endfor %}
+        <div>
+            {% if friends %}
+                {% for friend in friends %}
+                <li class="friend-request-item">
+                    <img src="{{ url_for('static', filename='images/' + friend.profile_pic) }}" alt="{{ friend.username }}'s Profile Picture" class="friend-profile-pic">
+                    {{ friend.username }}
+                    <span class="friend-request-emoji" title="Remove Friend">❌</span>
+                    <form method="POST" action="{{ url_for('remove_friend', user_id=friend.id) }}" style="display: inline;">
+                    </form>
+                </li>
+                {% endfor %}
+            {% else %}
+                <div class="center-text">You do not have any friends yet</div>
+            {% endif %}
+        </div>
     </ul>
     {% if incoming_requests %}
         <h3>Friend Requests</h3>
@@ -52,7 +58,7 @@
             {% endfor %}
         </ul>
     {% endif %}
-    <a class="btn btn-danger mt-3" href="{{ url_for('logout') }}">Logout</a>
+    <a class="btn btn-danger mt-3 logout-button" href="{{ url_for('logout') }}">Logout</a>
 </div>
 <!-- Search Results Modal -->
 <div class="modal fade" id="searchResultsModal" tabindex="-1" role="dialog" aria-labelledby="searchResultsModalLabel" aria-hidden="true">
