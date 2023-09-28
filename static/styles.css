@@ -441,3 +441,13 @@ tr:hover {
 label[for="picture"] {
     margin-top: 20px; /* Adjust value as needed */
 }
+.profile-pic-update label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+

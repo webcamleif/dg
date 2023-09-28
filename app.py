@@ -379,8 +379,8 @@ def statistics():
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    if request.method == 'POST' and 'photo' in request.files:
-        filename = photos.save(request.files['photo'])
+    if request.method == 'POST' and 'picture' in request.files:
+        filename = photos.save(request.files['picture'])
         current_user.profile_pic = filename
         db.session.commit()
         flash("Profile picture has been updated!")

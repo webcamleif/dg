@@ -4,11 +4,14 @@
     <h2>{{ user.username }}</h2>
     <img src="{{ url_for('static', filename='images/' + (user.profile_pic if user.profile_pic else user.display_name + '.png')) }}" class="img-thumbnail profile-image">
     <form method="POST" enctype="multipart/form-data" class="profile-form">
-        <div class="form-group">
-            <label for="picture" class="btn btn-primary">Choose File</label>
-            <input type="file" id="picture" name="picture" style="display: none;">
+        <div class="profile-pic-update">
+            <label>Change profile picture</label>
+            <div class="button-group">
+                <label for="picture" class="btn btn-primary">Choose File</label>
+                <input type="file" id="picture" name="picture" style="display: none;">
+                <button type="submit" class="btn btn-primary" id="update-button">Update</button>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Update</button>
     </form>
     <form onsubmit="searchUsers(); return false;">
         <input type="text" id="query" name="query" placeholder="Search for users" required>
