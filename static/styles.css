@@ -461,7 +461,9 @@ label[for="picture"] {
 }
 
 .custom-file-upload {
-    padding: .375rem .75rem; /* Match padding with the Update button */
+    padding: .375rem .75rem; /* Adjust padding to match */
+    line-height: 1.5; /* Adjust line-height to match */
+    vertical-align: middle; /* Align text vertically */
 }
 #search-bar {
     height: 38px; /* Adjust height to match the Search button */
