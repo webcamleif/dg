@@ -433,6 +433,11 @@ tr:hover {
     margin-bottom: 20px; /* Adjust value as needed */
 }
 #logout-button {
-    align-self: center;
-    margin-bottom: 20px; /* Adjust value as needed */
+    position: fixed;
+    bottom: 20px; /* Adjust value as needed */
+    left: 50%;
+    transform: translateX(-50%);
+}
+label[for="picture"] {
+    margin-top: 20px; /* Adjust value as needed */
 }
