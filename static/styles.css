@@ -455,19 +455,26 @@ label[for="picture"] {
 }
 
 .button-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-wrapper {
     display: inline-flex;
-    align-items: center; /* Vertically align the items in the center */
+    align-items: center;
     justify-content: center;
 }
 
 .custom-file-upload, #update-button {
-    display: inline-block; /* Treat both elements as inline-block */
-    margin: 0; /* Reset margins */
-    padding: .375rem .75rem; /* Adjust padding to match */
-    line-height: 1.5; /* Adjust line-height to match */
-    vertical-align: middle; /* Align text vertically */
-    border: 1px solid transparent; /* Add a transparent border to ensure consistent sizing */
-    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+    width: 100px;  /* Set a fixed width */
+    height: 38px;  /* Set a fixed height */
+    margin: 0; 
+    padding: .375rem .75rem;
+    line-height: 1.5;
+    vertical-align: middle;
+    border: 1px solid transparent;
+    box-sizing: border-box;
 }
 
 #search-bar {
