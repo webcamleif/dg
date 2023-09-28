@@ -7,15 +7,15 @@
         <div class="profile-pic-update">
             <label>Change profile picture</label>
             <div class="button-group">
-                <label for="picture" class="btn btn-primary">Choose File</label>
+                <label for="picture" class="btn btn-primary custom-file-upload">Choose File</label>
                 <input type="file" id="picture" name="picture" style="display: none;">
                 <button type="submit" class="btn btn-primary" id="update-button">Update</button>
             </div>
         </div>
     </form>
     <form onsubmit="searchUsers(); return false;">
-        <input type="text" id="query" name="query" placeholder="Search for users" required>
-        <button type="submit" class="btn btn-primary">Search</button>
+        <input type="text" id="search-bar" name="username" placeholder="Search for users" required>
+        <button type="submit" class="btn btn-primary" id="search-button">Search</button>
     </form>
     <h3>Friends</h3>
     <ul>

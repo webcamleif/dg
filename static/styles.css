@@ -450,4 +450,24 @@ label[for="picture"] {
     display: flex;
     gap: 10px;
 }
+.profile-pic-update {
+    text-align: center;
+}
 
+.button-group {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-file-upload {
+    padding: .375rem .75rem; /* Match padding with the Update button */
+}
+#search-bar {
+    height: 38px; /* Adjust height to match the Search button */
+    border-radius: .2rem; /* Optional: match border-radius with the Search button */
+}
+
+#search-button {
+    border-radius: .2rem; /* Optional: match border-radius with the Search bar */
+}
