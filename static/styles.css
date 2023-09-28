@@ -429,39 +429,9 @@ tr:hover {
     height: 50px;        /* Adjust height as needed */
     margin-right: 10px;  /* Space between image and text */
 }
-#update-button {
-    margin-bottom: 20px; /* Adjust value as needed */
-}
-#logout-button {
-    position: fixed;
-    bottom: 20px; /* Adjust value as needed */
-    left: 50%;
-    transform: translateX(-50%);
-}
-label[for="picture"] {
-    margin-top: 20px; /* Adjust value as needed */
-}
-.profile-pic-update label {
-    display: block;
-    margin-bottom: 10px;
-}
 
 .button-group {
     display: flex;
-    gap: 10px;
-}
-.profile-pic-update {
-    text-align: center;
-}
-
-.button-group {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.button-wrapper {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
 }
