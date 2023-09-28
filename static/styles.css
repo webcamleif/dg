@@ -429,4 +429,10 @@ tr:hover {
     height: 50px;        /* Adjust height as needed */
     margin-right: 10px;  /* Space between image and text */
 }
-
+#update-button {
+    margin-bottom: 20px; /* Adjust value as needed */
+}
+#logout-button {
+    align-self: center;
+    margin-bottom: 20px; /* Adjust value as needed */
+}
