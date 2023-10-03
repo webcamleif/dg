@@ -13,10 +13,12 @@ from flask_login import login_required
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from math import radians, cos, sin, asin, sqrt
 from PIL import Image, ImageDraw, ImageFont
+from flask_socketio import SocketIO, send, emit
 import os, secrets, logging
 
 photos = UploadSet('photos', IMAGES)
 app = Flask(__name__)
+socketio = SocketIO(app)
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
@@ -32,6 +34,16 @@ app.config['SECRET_KEY'] = 'your_secret_key'  # Replace with your secret key
 app.config['GOOGLE_OAUTH_CLIENT_ID'] = os.getenv('GOOGLE_CLIENT_ID')
 app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = os.getenv('GOOGLE_CLIENT_SECRET')
 setup_db(app)
+
+@socketio.on('send_message')
+def handle_message(data):
+    # Save the message to the database
+    message = Message(sender_id=current_user.id, receiver_id=data['receiver_id'], content=data['content'])
+    db.session.add(message)
+    db.session.commit()
+
+    # Emit the message to the receiver
+    emit('receive_message', {'content': data['content'], 'sender_id': current_user.id}, room=data['receiver_id'])
 
 @login_manager.user_loader
 def load_user(user_id):
