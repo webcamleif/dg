@@ -22,23 +22,34 @@
         <button type="submit" class="btn btn-primary" id="search-button">Search</button>
     </form>
     <h3>Friends</h3>
-    <ul>
-        <div>
-            {% if friends %}
-                {% for friend in friends %}
-                <li class="friend-request-item">
-                    <img src="{{ url_for('static', filename='images/' + friend.profile_pic) }}" alt="{{ friend.username }}'s Profile Picture" class="friend-profile-pic">
-                    {{ friend.username }}
-                    <span class="friend-request-emoji" title="Remove Friend">❌</span>
-                    <form method="POST" action="{{ url_for('remove_friend', user_id=friend.id) }}" style="display: inline;">
-                    </form>
-                </li>
-                {% endfor %}
-            {% else %}
-                <div class="center-text">You do not have any friends yet</div>
-            {% endif %}
-        </div>
-    </ul>
+    <div>
+        {% if friends %}
+            {% for friend in friends %}
+            <div class="friend-card" onclick="openChatModal({{ friend.id }})">
+                <div class="friend-header">
+                    <span class="friend-name">{{ friend.username }}</span>
+                    <div class="dropdown friend-dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            ...
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="{{ url_for('remove_friend', user_id=friend.id) }}">Remove Friend</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="friend-status">
+                    <span class="online-status">Online/Offline</span> <!-- This will need backend support to determine online status -->
+                    <span class="last-seen">Last Seen</span> <!-- This will need backend support to determine last seen time -->
+                </div>
+                <div class="friend-last-message">
+                    <!-- This will need backend support to fetch the last message or display "No messages" -->
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="center-text">You do not have any friends yet</div>
+        {% endif %}
+    </div>
     {% if incoming_requests %}
         <h3>Friend Requests</h3>
         <ul>
@@ -59,6 +70,29 @@
         </ul>
     {% endif %}
     <a class="btn btn-danger mt-3 logout-button" href="{{ url_for('logout') }}">Logout</a>
+    <!-- Chat Modal -->
+    <div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatModalLabel">Chat with [Friend's Name]</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="chat-messages">
+                        <!-- Messages will be appended here -->
+                    </div>
+                    <textarea class="chat-input" placeholder="Type your message..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="sendMessage()">Send Message</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- Search Results Modal -->
 <div class="modal fade" id="searchResultsModal" tabindex="-1" role="dialog" aria-labelledby="searchResultsModalLabel" aria-hidden="true">
@@ -125,6 +159,38 @@
     }
 
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script type="text/javascript">
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    function openChatModal(friendId) {
+        // Open the chat modal
+        $('#chatModal').modal('show');
+
+        // Fetch previous messages and display them
+        // ...
+    }
+
+    function sendMessage() {
+        var messageContent = $('.chat-input').val();
+
+        // Emit the message to the server
+        socket.emit('send_message', {
+            'receiver_id': receiverId,
+            'content': messageContent
+        });
+
+        // Append the sent message to the chat
+        // ...
+    }
+
+    // Listen for the 'receive_message' event to update the chat in real-time
+    socket.on('receive_message', function(data) {
+        // Append the received message to the chat
+        // ...
+    });
+</script>
+
 
 {% endblock %}
 

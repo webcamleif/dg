@@ -430,6 +430,52 @@ tr:hover {
     height: 50px;        /* Adjust height as needed */
     margin-right: 10px;  /* Space between image and text */
 }
+.friend-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #343a40;
+    cursor: pointer; /* Makes the card clickable */
+}
+
+.friend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.friend-name {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.friend-status {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #777;
+}
+
+.friend-last-message {
+    margin-top: 10px;
+}
+
+.chat-messages {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.chat-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 
 .button-group {
     display: flex;
