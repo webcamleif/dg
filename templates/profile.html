@@ -29,7 +29,7 @@
                 <div class="friend-header">
                     <span class="friend-name">{{ friend.username }}</span>
                     <div class="dropdown friend-dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="event.stopPropagation();">
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="{{ url_for('remove_friend', user_id=friend.id) }}">Remove Friend</a>
