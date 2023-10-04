@@ -32,7 +32,10 @@
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="event.stopPropagation();">
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="{{ url_for('remove_friend', user_id=friend.id) }}">Remove Friend</a>
+                            <form method="post" action="{{ url_for('remove_friend', user_id=friend.id) }}">
+                                <button type="submit" class="dropdown-item">Remove friend</button>
+                            </form>
+
                         </div>
                     </div>
                 </div>
@@ -68,16 +71,6 @@
             {% endfor %}
         </ul>
     {% endif %}
-    <div class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="testDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Test Dropdown
-      </button>
-      <div class="dropdown-menu" aria-labelledby="testDropdown">
-        <a class="dropdown-item" href="#">Action</a>
-        <a class="dropdown-item" href="#">Another action</a>
-        <a class="dropdown-item" href="#">Something else here</a>
-      </div>
-    </div>
     <a class="btn btn-danger mt-3 logout-button" href="{{ url_for('logout') }}">Logout</a>
     <!-- Chat Modal -->
     <div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">

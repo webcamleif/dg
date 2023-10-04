@@ -438,6 +438,13 @@ tr:hover {
     background-color: #343a40;
     cursor: pointer; /* Makes the card clickable */
 }
+.friend-card .dropdown-menu {
+    top: 0;
+    left: auto;
+    right: 0;
+    transform: none;
+}
+
 
 .friend-header {
     display: flex;
