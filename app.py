@@ -14,6 +14,7 @@ from flask_uploads import UploadSet, configure_uploads, IMAGES
 from math import radians, cos, sin, asin, sqrt
 from PIL import Image, ImageDraw, ImageFont
 from flask_socketio import SocketIO, send, emit
+from datetime import datetime, timedelta
 import os, secrets, logging
 
 photos = UploadSet('photos', IMAGES)
@@ -44,6 +45,12 @@ def handle_message(data):
 
     # Emit the message to the receiver
     emit('receive_message', {'content': data['content'], 'sender_id': current_user.id}, room=data['receiver_id'])
+
+@app.before_request
+def update_last_seen():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
 
 @login_manager.user_loader
 def load_user(user_id):

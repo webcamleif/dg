@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from sqlalchemy import JSON
-from datetime import datetime
+from datetime import datetime, timedelta
 
 db = SQLAlchemy()
 
@@ -16,12 +16,29 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     oauth = db.relationship('OAuth', backref='user', lazy=True)
     profile_pic = db.Column(db.String(20), nullable=False)
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def is_online(self):
+        return self.last_seen >= datetime.utcnow() - timedelta(seconds=30)
+
+    def time_since_last_seen(self):
+        now = datetime.utcnow()
+        diff = now - self.last_seen
+
+        if diff < timedelta(minutes=1):
+            return "a few seconds ago"
+        elif diff < timedelta(hours=1):
+            return f"{diff.seconds // 60} minutes ago"
+        elif diff < timedelta(days=1):
+            return f"{diff.seconds // 3600} hours ago"
+        else:
+            return f"{diff.days} days ago"
 
     @staticmethod
     def get_or_create(email):

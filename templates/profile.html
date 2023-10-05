@@ -40,8 +40,12 @@
                     </div>
                 </div>
                 <div class="friend-status">
-                    <span class="online-status">Online/Offline</span> <!-- This will need backend support to determine online status -->
-                    <span class="last-seen">Last Seen</span> <!-- This will need backend support to determine last seen time -->
+                    {% if friend.is_online() %}
+                        <span class="status-online">Online</span>
+                    {% else %}
+                        <span class="status-offline">Offline</span>
+                        <span class="last-seen">Last seen {{ friend.time_since_last_seen() }}</span>
+                    {% endif %}
                 </div>
                 <div class="friend-last-message">
                     <!-- This will need backend support to fetch the last message or display "No messages" -->

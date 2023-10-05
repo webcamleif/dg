@@ -521,3 +521,14 @@ tr:hover {
     text-align: center;
     align-items: center;
 }
+.status-online {
+    color: green;
+}
+
+.status-offline {
+    color: red;
+}
+.last-seen {
+    font-size: 0.9em;
+    color: #888;
+}
