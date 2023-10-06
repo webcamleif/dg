@@ -27,6 +27,7 @@
             {% for friend in friends %}
             <div class="friend-card" onclick="openChatModal({{ friend.id }})">
                 <div class="friend-header">
+                    <img src="{{ url_for('static', filename='images/' + (friend.profile_pic if friend.profile_pic else friend.display_name + '.png')) }}" alt="{{ friend.username }}'s Profile Picture" class="friend-profile-pic">
                     <span class="friend-name">{{ friend.username }}</span>
                     <div class="dropdown friend-dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="event.stopPropagation();">

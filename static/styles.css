@@ -438,14 +438,20 @@ tr:hover {
     background-color: #343a40;
     cursor: pointer; /* Makes the card clickable */
 }
+.friend-card .friend-header {
+    display: flex; /* Use flexbox layout */
+    align-items: center; /* Vertically center the items */
+}
 .friend-card .dropdown-menu {
     top: 0;
     left: auto;
     right: 0;
     transform: none;
 }
-
-
+.friend-name {
+    /* If there are any styles centering the text, remove or override them here */
+    text-align: left;
+}
 .friend-header {
     display: flex;
     justify-content: space-between;
