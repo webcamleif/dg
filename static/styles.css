@@ -457,6 +457,9 @@ tr:hover {
     justify-content: flex-start;
     align-items: center;
 }
+.friend-header .friend-dropdown {
+    margin-left: auto;
+}
 
 .friend-name {
     font-weight: bold;
