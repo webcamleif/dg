@@ -61,18 +61,20 @@
         <h3>Friend Requests</h3>
         <ul>
             {% for request in incoming_requests %}
-            <li class="friend-request-item">
-                <img src="{{ url_for('static', filename='images/' + request.sender.profile_pic) }}" alt="{{ request.sender.username }}'s Profile Picture" class="friend-profile-pic">
-                <span>{{ request.sender.username }} wants to be friends.</span>
-                <div>
-                    <form method="POST" action="{{ url_for('accept_request', request_id=request.id) }}" style="display: inline;">
-                        <button type="submit" class="friend-request-emoji" title="Accept">✅</button>
-                    </form>
-                    <form method="POST" action="{{ url_for('decline_request', request_id=request.id) }}" style="display: inline;">
-                        <button type="submit" class="friend-request-emoji" title="Decline">❌</button>
-                    </form>
+            <div class="friend-card">
+                <div class="friend-header">
+                    <img src="{{ url_for('static', filename='images/' + request.sender.profile_pic) }}" alt="{{ request.sender.username }}'s Profile Picture" class="friend-profile-pic">
+                    <span>{{ request.sender.username }} wants to be friends.</span>
+                    <div class="friend-request-emoji">
+                        <form method="POST" action="{{ url_for('accept_request', request_id=request.id) }}" style="display: inline;">
+                            <button type="submit" class="friend-request-emoji" title="Accept">✅</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('decline_request', request_id=request.id) }}" style="display: inline;">
+                            <button type="submit" class="friend-request-emoji" title="Decline">❌</button>
+                        </form>
+                    </div>
                 </div>
-            </li>
+            </div>
             {% endfor %}
         </ul>
     {% endif %}
