@@ -126,6 +126,7 @@
 
     function openChatModal(friendId) {
         // Open the chat modal
+        $('#chatModalTitle').text('Chat with ');
         $('#chatModal').modal('show');
         receiverId = friendId;
 
@@ -165,7 +166,6 @@
         var chatMessagesDiv = $('.chat-messages');
         chatMessagesDiv.append(`<p>${data.sender_name} (${data.timestamp}): ${data.content}</p>`);
     });
-
 
 </script>
 <script>

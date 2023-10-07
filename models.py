@@ -135,8 +135,9 @@ class Message(db.Model):
         return {
             'id': self.id,
             'sender_id': self.sender_id,
+            'sender_name': User.query.get(self.sender_id).username,  # Add sender's name
             'receiver_id': self.receiver_id,
             'content': self.content,
-            'timestamp': self.timestamp.strftime('%Y-%m-%d %H:%M:%S')  # Convert datetime to string
+            'timestamp': self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
         }
 
