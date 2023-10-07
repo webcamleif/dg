@@ -147,17 +147,18 @@
     }
 
     function appendMessage(sender, content) {
-        var messageElement = $('<div>').text(sender + ': ' + content);
+        var messageElement = $('<div>').text(sender + ' (' + timestamp + '): ' + content);
         $('.chat-messages').append(messageElement);
     }
     
     function sendMessage() {
         var messageContent = $('.chat-input').val();
+        var currentTimestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');  // Get current timestamp in 'YYYY-MM-DD HH:MM:SS' format
         socket.emit('send_message', {
             'receiver_id': receiverId,
             'content': messageContent
         });
-        appendMessage('You', messageContent);  // Append the sent message
+        appendMessage('You', messageContent, currentTimestamp);  // Append the sent message with timestamp
         $('.chat-input').val('');  // Clear the input field
     }
     
