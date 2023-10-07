@@ -44,7 +44,18 @@ def handle_message(data):
     db.session.commit()
 
     # Emit the message to the receiver
-    emit('receive_message', {'content': data['content'], 'sender_id': current_user.id}, room=data['receiver_id'])
+    emit('receive_message', {'content': data['content'], 'sender_name': current_user.username, 'sender_id': current_user.id}, room=data['receiver_id'])
+
+@app.route('/get_chat_history', methods=['POST'])
+@login_required
+def get_chat_history():
+    receiver_id = request.json.get('receiver_id')
+    messages = Message.query.filter(
+        (Message.sender_id == current_user.id) & (Message.receiver_id == receiver_id) |
+        (Message.sender_id == receiver_id) & (Message.receiver_id == current_user.id)
+    ).order_by(Message.timestamp.asc()).all()
+    return jsonify([message.serialize() for message in messages])
+
 
 @app.before_request
 def update_last_seen():

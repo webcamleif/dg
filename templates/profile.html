@@ -125,12 +125,18 @@
     var socket = io.connect('https://' + document.domain + ':' + location.port);
 
     function openChatModal(friendId) {
-        receiverId = friendId;
         // Open the chat modal
         $('#chatModal').modal('show');
+        receiverId = friendId;
 
         // Fetch previous messages and display them
-        // ...
+        $.post('/get_chat_history', {receiver_id: receiverId}, function(data) {
+            var chatMessagesDiv = $('.chat-messages');
+            chatMessagesDiv.empty();
+            data.forEach(message => {
+                chatMessagesDiv.append(`<p>${message.sender_id === receiverId ? message.sender_name : 'You'}: ${message.content}</p>`);
+            });
+        });
     }
 
     function appendMessage(sender, content) {
@@ -149,7 +155,8 @@
     }
     
     socket.on('receive_message', function(data) {
-        appendMessage('Friend', data.content);  // Append the received message
+        var chatMessagesDiv = $('.chat-messages');
+        chatMessagesDiv.append(`<p>${data.sender_name}: ${data.content}</p>`);
     });
 
 </script>
