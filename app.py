@@ -38,6 +38,7 @@ setup_db(app)
 
 @socketio.on('send_message')
 def handle_message(data):
+    print(f"Received message: {data['content']} from {current_user.username}")
     # Save the message to the database
     message = Message(sender_id=current_user.id, receiver_id=data['receiver_id'], content=data['content'])
     db.session.add(message)
@@ -46,10 +47,10 @@ def handle_message(data):
     # Emit the message to the receiver
     emit('receive_message', {
         'content': data['content'],
-        'sender_name': current_user.username,  # Add sender's name
+        'sender_name': current_user.username,
         'sender_id': current_user.id,
-        'timestamp': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')  # Add timestamp
-    }, room=data['receiver_id'])
+        'timestamp': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+    }, room=data['receiver_id'], include_self=False)  # Add include_self=False
 
 
 @app.route('/get_chat_history', methods=['POST'])
