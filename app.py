@@ -44,7 +44,13 @@ def handle_message(data):
     db.session.commit()
 
     # Emit the message to the receiver
-    emit('receive_message', {'content': data['content'], 'sender_name': current_user.username, 'sender_id': current_user.id}, room=data['receiver_id'])
+    emit('receive_message', {
+        'content': data['content'],
+        'sender_name': current_user.username,  # Add sender's name
+        'sender_id': current_user.id,
+        'timestamp': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')  # Add timestamp
+    }, room=data['receiver_id'])
+
 
 @app.route('/get_chat_history', methods=['POST'])
 @login_required

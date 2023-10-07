@@ -163,8 +163,9 @@
     
     socket.on('receive_message', function(data) {
         var chatMessagesDiv = $('.chat-messages');
-        chatMessagesDiv.append(`<p>${data.sender_name}: ${data.content}</p>`);
+        chatMessagesDiv.append(`<p>${data.sender_name} (${data.timestamp}): ${data.content}</p>`);
     });
+
 
 </script>
 <script>
