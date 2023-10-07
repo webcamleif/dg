@@ -121,7 +121,6 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script type="text/javascript">
-    var receiverId;
     var socket = io.connect('https://' + document.domain + ':' + location.port);
 
     function openChatModal(friendId, friendName) {
@@ -163,13 +162,13 @@
     }
     
     socket.on('receive_message', function(data) {
+        console.log("Received message:", data);
         var chatMessagesDiv = $('.chat-messages');
         chatMessagesDiv.append(`<p>${data.sender_name} (${data.timestamp}): ${data.content}</p>`);
     });
 
 </script>
 <script>
-    var receiverId;
     document.querySelectorAll('.remove-friend-icon').forEach(function(icon) {
         icon.addEventListener('click', function() {
             var confirmRemove = confirm('Are you sure you want to remove this friend?');

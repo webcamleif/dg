@@ -13,7 +13,7 @@ from flask_login import login_required
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from math import radians, cos, sin, asin, sqrt
 from PIL import Image, ImageDraw, ImageFont
-from flask_socketio import SocketIO, send, emit
+from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from datetime import datetime, timedelta
 import os, secrets, logging
 
@@ -35,22 +35,43 @@ app.config['SECRET_KEY'] = 'your_secret_key'  # Replace with your secret key
 app.config['GOOGLE_OAUTH_CLIENT_ID'] = os.getenv('GOOGLE_CLIENT_ID')
 app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = os.getenv('GOOGLE_CLIENT_SECRET')
 setup_db(app)
+user_socket_map = {}
+
+@socketio.on('connect')
+def handle_connect():
+    # When a user connects, map their user ID to their socket session ID
+    user_id = current_user.id
+    user_socket_map[user_id] = request.sid
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    # When a user disconnects, remove them from the mapping
+    user_id = current_user.id
+    user_socket_map.pop(user_id, None)
 
 @socketio.on('send_message')
-def handle_message(data):
-    print(f"Received message: {data['content']} from {current_user.username}")
-    # Save the message to the database
-    message = Message(sender_id=current_user.id, receiver_id=data['receiver_id'], content=data['content'])
-    db.session.add(message)
-    db.session.commit()
+def handle_send_message(data):
+    try:
+        sender_id = current_user.id
+        receiver_id = data['receiver_id']
+        content = data['content']
 
-    emit('receive_message', {
-        'content': data['content'],
-        'sender_name': current_user.username,
-        'sender_id': current_user.id,
-        'timestamp': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-    }, room=data['receiver_id'], include_self=False)
+        # Save the message to the database
+        message = Message(sender_id=sender_id, receiver_id=receiver_id, content=content)
+        db.session.add(message)
+        db.session.commit()
 
+        # Emit the message to the intended recipient using their socket session ID
+        receiver_socket_id = user_socket_map.get(receiver_id)
+        if receiver_socket_id:
+            emit('receive_message', {
+                'sender_id': sender_id,
+                'sender_name': current_user.username,
+                'content': content,
+                'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            }, room=receiver_socket_id)
+    except Exception as e:
+        print(f"Error sending message: {e}")
 
 @app.route('/get_chat_history', methods=['POST'])
 @login_required
