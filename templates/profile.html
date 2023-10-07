@@ -25,7 +25,7 @@
     <div>
         {% if friends %}
             {% for friend in friends %}
-            <div class="friend-card" onclick="openChatModal({{ friend.id }})">
+            <div class="friend-card" onclick="openChatModal({{ friend.id }}, '{{ friend.username }}')">
                 <div class="friend-header">
                     <img src="{{ url_for('static', filename='images/' + (friend.profile_pic if friend.profile_pic else friend.display_name + '.png')) }}" alt="{{ friend.username }}'s Profile Picture" class="friend-profile-pic">
                     <span class="friend-name">{{ friend.username }}</span>
@@ -124,9 +124,9 @@
     var receiverId;
     var socket = io.connect('https://' + document.domain + ':' + location.port);
 
-    function openChatModal(friendId) {
+    function openChatModal(friendId, friendName) {
         // Open the chat modal
-        $('#chatModalTitle').text('Chat with ');
+        $('#chatModalLabel').text('Chat with ' + friendName);
         $('#chatModal').modal('show');
         receiverId = friendId;
 
