@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, current_app, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import User, Scorecard, Course, Hole, db, setup_db, ScorecardDetail, Friendship, FriendRequest
+from models import User, Scorecard, Course, Hole, db, setup_db, ScorecardDetail, Friendship, FriendRequest, Message
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from models import OAuth
@@ -49,13 +49,16 @@ def handle_message(data):
 @app.route('/get_chat_history', methods=['POST'])
 @login_required
 def get_chat_history():
-    receiver_id = request.json.get('receiver_id')
-    messages = Message.query.filter(
-        (Message.sender_id == current_user.id) & (Message.receiver_id == receiver_id) |
-        (Message.sender_id == receiver_id) & (Message.receiver_id == current_user.id)
-    ).order_by(Message.timestamp.asc()).all()
-    return jsonify([message.serialize() for message in messages])
-
+    try:
+        receiver_id = request.json.get('receiver_id')
+        messages = Message.query.filter(
+            (Message.sender_id == current_user.id) & (Message.receiver_id == receiver_id) |
+            (Message.sender_id == receiver_id) & (Message.receiver_id == current_user.id)
+        ).order_by(Message.timestamp.asc()).all()
+        return jsonify([message.serialize() for message in messages])
+    except Exception as e:
+        current_app.logger.error(f"Error fetching chat history: {e}")
+        return jsonify({"error": "An error occurred while fetching chat history."}), 500
 
 @app.before_request
 def update_last_seen():

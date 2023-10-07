@@ -131,3 +131,12 @@ class Message(db.Model):
     def __repr__(self):
         return f'<Message {self.content}>'
 
+    def serialize(self):
+        return {
+            'id': self.id,
+            'sender_id': self.sender_id,
+            'receiver_id': self.receiver_id,
+            'content': self.content,
+            'timestamp': self.timestamp.strftime('%Y-%m-%d %H:%M:%S')  # Convert datetime to string
+        }
+
