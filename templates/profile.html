@@ -130,13 +130,20 @@
         receiverId = friendId;
 
         // Fetch previous messages and display them
-        $.post('/get_chat_history', {receiver_id: receiverId}, function(data) {
-            var chatMessagesDiv = $('.chat-messages');
-            chatMessagesDiv.empty();
-            data.forEach(message => {
-                chatMessagesDiv.append(`<p>${message.sender_id === receiverId ? message.sender_name : 'You'}: ${message.content}</p>`);
-            });
+        $.ajax({
+            url: '/get_chat_history',
+            type: 'POST',
+            contentType: 'application/json',  // Set content type to JSON
+            data: JSON.stringify({receiver_id: receiverId}),  // Stringify the data
+            success: function(data) {
+                var chatMessagesDiv = $('.chat-messages');
+                chatMessagesDiv.empty();
+                data.forEach(message => {
+                    chatMessagesDiv.append(`<p>${message.sender_id === receiverId ? message.sender_name : 'You'}: ${message.content}</p>`);
+                });
+            }
         });
+
     }
 
     function appendMessage(sender, content) {
