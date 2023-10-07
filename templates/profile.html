@@ -139,14 +139,14 @@
                 var chatMessagesDiv = $('.chat-messages');
                 chatMessagesDiv.empty();
                 data.forEach(message => {
-                    chatMessagesDiv.append(`<p>${message.sender_id === receiverId ? message.sender_name : 'You'}: ${message.content}</p>`);
+                    chatMessagesDiv.append(`<p>${message.sender_id === receiverId ? message.sender_name : 'You'} (${message.timestamp}): ${message.content}</p>`);
                 });
             }
         });
 
     }
 
-    function appendMessage(sender, content) {
+    function appendMessage(sender, content, timestamp) {
         var messageElement = $('<div>').text(sender + ' (' + timestamp + '): ' + content);
         $('.chat-messages').append(messageElement);
     }
@@ -158,7 +158,7 @@
             'receiver_id': receiverId,
             'content': messageContent
         });
-        appendMessage('You', messageContent, currentTimestamp);  // Append the sent message with timestamp
+        appendMessage('You', messageContent, currentTimestamp);  // Pass the currentTimestamp here
         $('.chat-input').val('');  // Clear the input field
     }
     
