@@ -68,7 +68,7 @@ def handle_send_message(data):
                 'sender_id': sender_id,
                 'sender_name': current_user.username,
                 'content': content,
-                'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                'timestamp': message.timestamp.strftime('%d/%m %H:%M')
             }, room=receiver_socket_id)
     except Exception as e:
         print(f"Error sending message: {e}")

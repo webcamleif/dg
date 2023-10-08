@@ -141,19 +141,28 @@
                 data.forEach(message => {
                     chatMessagesDiv.append(`<p>(${message.timestamp}) ${message.sender_id === receiverId ? message.sender_name : 'You'}: ${message.content}</p>`);
                 });
+                scrollToBottom();
             }
         });
 
     }
 
     function appendMessage(sender, content, timestamp) {
-        var messageElement = $('<div>').text(sender + ' (' + timestamp + '): ' + content);
+        var messageElement = $('<div>').text(' (' + timestamp + ') ' + sender + ': ' + content);
         $('.chat-messages').append(messageElement);
+        scrollToBottom();
     }
     
     function sendMessage() {
         var messageContent = $('.chat-input').val();
-        var currentTimestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');  // Get current timestamp in 'YYYY-MM-DD HH:MM:SS' format
+        var date = new Date();
+        var day = String(date.getDate()).padStart(2, '0');  // Get the day and ensure it's two digits
+        var month = String(date.getMonth() + 1).padStart(2, '0');  // Get the month (0-11, so add 1) and ensure it's two digits
+        var hours = String(date.getHours()).padStart(2, '0');  // Get the hours and ensure it's two digits
+        var minutes = String(date.getMinutes()).padStart(2, '0');  // Get the minutes and ensure it's two digits
+        
+        var currentTimestamp = day + '/' + month + ' ' + hours + ':' + minutes;
+
         socket.emit('send_message', {
             'receiver_id': receiverId,
             'content': messageContent
@@ -166,7 +175,12 @@
         console.log("Received message:", data);
         var chatMessagesDiv = $('.chat-messages');
         chatMessagesDiv.append(`<p>(${data.timestamp}) ${data.sender_name}: ${data.content}</p>`);
+        scrollToBottom();
     });
+    function scrollToBottom() {
+        var chatMessagesDiv = $('.chat-messages');
+        chatMessagesDiv.scrollTop(chatMessagesDiv[0].scrollHeight);
+    }
 
 </script>
 <script>
