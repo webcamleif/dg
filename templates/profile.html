@@ -139,7 +139,7 @@
                 var chatMessagesDiv = $('.chat-messages');
                 chatMessagesDiv.empty();
                 data.forEach(message => {
-                    chatMessagesDiv.append(`<p>(${message.timestamp}) ${message.sender_id === receiverId ? message.sender_name : 'You'}: ${message.content}</p>`);
+                    chatMessagesDiv.append(`<p>(${message.timestamp}) <strong>${message.sender_id === receiverId ? message.sender_name : 'You'}</strong>: ${message.content}</p>`);
                 });
                 scrollToBottom();
             }
@@ -148,7 +148,7 @@
     }
 
     function appendMessage(sender, content, timestamp) {
-        var messageElement = $('<div>').text(' (' + timestamp + ') ' + sender + ': ' + content);
+        var messageElement = $('<div>').html(' (' + timestamp + ') ' + '<strong>' + sender + ': ' + '</strong>' + content);
         $('.chat-messages').append(messageElement);
         scrollToBottom();
     }
@@ -175,6 +175,7 @@
         console.log("Received message:", data);
         var chatMessagesDiv = $('.chat-messages');
         chatMessagesDiv.append(`<p>(${data.timestamp}) ${data.sender_name}: ${data.content}</p>`);
+        chatMessagesDiv.append(`<p>(${data.timestamp}) <strong>${data.sender_name}</strong>: ${data.content}</p>`);
         scrollToBottom();
     });
     function scrollToBottom() {
