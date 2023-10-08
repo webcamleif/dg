@@ -138,6 +138,6 @@ class Message(db.Model):
             'sender_name': User.query.get(self.sender_id).username,  # Add sender's name
             'receiver_id': self.receiver_id,
             'content': self.content,
-            'timestamp': self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            'timestamp': self.timestamp.strftime('%d/%m %H:%M')
         }
 
