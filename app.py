@@ -304,7 +304,7 @@ def home(hole_number):
         holes = []
         active_hole = None
     courses = Course.query.all()
-    return render_template('home.html', active_scorecard=active_scorecard, courses=courses, holes=holes, active_hole=active_hole, active_course=active_course)
+    return render_template('home.html', active_scorecard=active_scorecard, user=current_user, courses=courses, holes=holes, active_hole=active_hole, active_course=active_course)
 
 @app.route('/courses')
 @login_required
