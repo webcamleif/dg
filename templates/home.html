@@ -7,14 +7,14 @@
             <h1>Scorecards</h1>
             {% if active_scorecard %}
             <div class="scorecard">
-                <h2>{{ active_course.name }}</h2>
-                <h3>Hole: {{ active_hole.hole_number }}</h3>
-                <div class="row">
-                    <div style="position: absolute; left: 20px;">
-                        <p class="distance">Distance: {{ active_hole.distance }} m</p>
-                    </div>
-                    <div style="position: absolute; right: 20px;">
-                        <p class="par">Par: {{ active_hole.par }}</p>
+                <div class="course-info-card">
+                    <h2>{{ active_course.name }}</h2>
+                </div>
+                <div class="hole-info-card">
+                    <h3>Hole: {{ active_hole.hole_number }}</h3>
+                    <div class="hole-details">
+                        <p class="distance"><i class="fas fa-ruler"></i>Distance: {{ active_hole.distance }} m</p>
+                        <p class="par"><i class="fas fa-flag"></i>Par: {{ active_hole.par }}</p>
                     </div>
                 </div>
                 <div class="profile-card">
