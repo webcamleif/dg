@@ -561,6 +561,16 @@ tr:hover {
     padding: 20%;  /* Increase padding for a larger card */
     font-size: 1.2em;  /* Increase font size for better visibility */
 }
+.username {
+    font-size: 18px;  /* Adjust as needed */
+    font-weight: bold;
+    margin-bottom: 10px;  /* Spacing between the username and profile picture */
+    white-space: nowrap;  /* Prevents the text from wrapping onto the next line */
+    overflow: hidden;  /* Hides any overflowed content */
+    text-overflow: ellipsis;  /* Adds an ellipsis (...) when the text overflows */
+    max-width: 90%;  /* Adjust as needed; ensures the text doesn't stretch outside the card */
+    text-align: center;  /* Centers the username */
+}
 
 .profile-picture {
     width: 100px;
