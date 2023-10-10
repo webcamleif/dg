@@ -7,13 +7,11 @@
             <h1>Scorecards</h1>
             {% if active_scorecard %}
             <div class="scorecard">
-                <div class="course-info-card">
-                    <h2>{{ active_course.name }}</h2>
-                </div>
-                <div class="hole-info-card">
-                    <h3>Hole: {{ active_hole.hole_number }}</h3>
-                    <div class="hole-details">
-                        <p class="distance"><i class="fas fa-ruler"></i>Distance: {{ active_hole.distance }} m</p>
+                <div class="course-hole-info-card">
+                    <h2 class="course-name">{{ active_course.name }}</h2>
+                    <div class="hole-details-row">
+                        <p class="distance"><i class="fas fa-ruler"></i>Dist: {{ active_hole.distance }} m</p>
+                        <h3>Hole: {{ active_hole.hole_number }}</h3>
                         <p class="par"><i class="fas fa-flag"></i>Par: {{ active_hole.par }}</p>
                     </div>
                 </div>
@@ -22,7 +20,6 @@
                     <h2>{{ user.name }}</h2>
                     <p>Current Score: <span id=score class="current-score">(E)</span></p>
                 </div>
-
                 <div class="user-score-throws">
                     <div class="user-score">
                     </div>

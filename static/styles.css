@@ -577,25 +577,31 @@ tr:hover {
         height: 80px;
     }
 }
-.course-info-card, .hole-info-card {
+.course-hole-info-card {
     background-color: #fff;
-    padding: 15px;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 10px 0;
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);  /* Gradient background */
 }
-.course-info-card:hover, .hole-info-card:hover {
+
+.course-hole-info-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.hole-details {
+.course-name {
+    font-size: 24px;
+    background-size: contain;
+}
+
+.hole-details-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
     gap: 20px;
 }
 
@@ -603,13 +609,8 @@ tr:hover {
     font-weight: bold;
     color: #343a40;
 }
+
 .distance i, .par i {
     margin-right: 8px;  /* Spacing between the icon and the text */
 }
-.course-info-card {
-    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-}
 
-.hole-info-card {
-    background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
-}
