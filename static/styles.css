@@ -279,13 +279,29 @@ html, body {
 }
 
 .btn-primary {
-    background-color: #3b5998;
-    border-color: #3b5998;
+    background-color: #5a6d8d; /* A shade of blue that complements the existing palette */
+    border-color: #5a6d8d;
 }
 
 .btn-primary:hover {
-    background-color: #4A69A1;
-    border-color: #4A69A1;
+    background-color: #4a5d7d; /* A slightly darker shade for hover */
+    border-color: #4a5d7d;
+}
+.increase-throw, .decrease-throw {
+    width: 40px; /* Adjust as needed */
+    height: 40px; /* Adjust as needed */
+    border-radius: 50%;
+    padding: 0; /* Remove padding to maintain the circle shape */
+    font-size: 16px; /* Adjust as needed */
+    text-align: center; /* Horizontally center the icon */
+    position: relative; /* Set position context for the icon */
+}
+
+.increase-throw i, .decrease-throw i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the icon */
 }
 .throws {
     margin-bottom: 40px;
@@ -554,17 +570,17 @@ tr:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 20px 0;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    padding-bottom: 0px;
 }
 .profile-card.solo-play {
     width: 70%;  /* Adjust as needed */
     margin: 0 auto;  /* Center the card */
-    padding: 20%;  /* Increase padding for a larger card */
     font-size: 1.2em;  /* Increase font size for better visibility */
 }
 .username {
     font-size: 18px;  /* Adjust as needed */
     font-weight: bold;
-    margin-bottom: 10px;  /* Spacing between the username and profile picture */
+    margin-bottom: 20px;  /* Spacing between the username and profile picture */
     white-space: nowrap;  /* Prevents the text from wrapping onto the next line */
     overflow: hidden;  /* Hides any overflowed content */
     text-overflow: ellipsis;  /* Adds an ellipsis (...) when the text overflows */
@@ -577,7 +593,7 @@ tr:hover {
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 15px;
+    margin-bottom: 30px;
 }
 
 .current-score {
