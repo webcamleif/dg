@@ -141,3 +141,15 @@ class Message(db.Model):
             'timestamp': self.timestamp.strftime('%d/%m %H:%M')
         }
 
+class GameInvite(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    status = db.Column(db.String(10), nullable=False, default='Pending')
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    sender = db.relationship('User', foreign_keys=[sender_id])
+    receiver = db.relationship('User', foreign_keys=[receiver_id])
+    course = db.relationship('Course')
+

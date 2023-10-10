@@ -49,6 +49,24 @@ def handle_disconnect():
     user_id = current_user.id
     user_socket_map.pop(user_id, None)
 
+@app.route('/send_invite', methods=['POST'])
+def send_invite():
+    friend_id = request.form.get('friend_id')
+    course_id = request.form.get('course_id')
+    
+    # Create a new GameInvite entry
+    invite = GameInvite(sender_id=current_user.id, receiver_id=friend_id, course_id=course_id)
+    db.session.add(invite)
+    db.session.commit()
+    
+    # Send a real-time notification to the friend
+    if friend_id in user_socket_map:
+        course = Course.query.get(course_id)
+        sender = User.query.get(current_user.id)
+        socketio.emit('receive_invite', {'sender_name': sender.username, 'course_name': course.name}, room=user_socket_map[friend_id])
+    
+    return jsonify(success=True)
+
 @socketio.on('send_message')
 def handle_send_message(data):
     try:

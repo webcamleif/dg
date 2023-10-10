@@ -117,7 +117,9 @@
       </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
+        var socket = io.connect('https://' + document.domain + ':' + location.port);
         function getRandomGradient() {
             // Generate random RGB values
             const randomRGB = () => {
@@ -152,6 +154,17 @@
         
         $(document).ready(function() {
             setProfileGradient();
+        });
+        socket.on('receive_invite', function(data) {
+            // Display the popup to the user
+            let invitePopup = `
+                <div class="invite-popup">
+                    ${data.sender_name} has invited you to a group play in ${data.course_name}
+                    <button onclick="acceptInvite()">Accept</button>
+                    <button onclick="declineInvite()">Decline</button>
+                </div>
+            `;
+            document.body.innerHTML += invitePopup;
         });
 
         $(document).ready(function() {
