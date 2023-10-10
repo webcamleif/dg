@@ -15,10 +15,10 @@
                         <p class="par"><i class="fas fa-flag"></i>Par: {{ active_hole.par }}</p>
                     </div>
                 </div>
-                <div class="profile-card">
+                <div class="profile-card solo-play">
                     <img src="static/images/{{ user.profile_pic }}" alt="Profile Picture" class="profile-picture">
                     <h2>{{ user.name }}</h2>
-                    <p>Current Score: <span id=score class="current-score">(E)</span></p>
+                    <p>Score: <span id=score class="current-score">(E)</span></p>
                 </div>
                 <div class="user-score-throws">
                     <div class="user-score">
@@ -97,6 +97,42 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
+        function getRandomGradient() {
+            // Generate random RGB values
+            const randomRGB = () => {
+                return {
+                    r: Math.floor(Math.random() * 256),
+                    g: Math.floor(Math.random() * 256),
+                    b: Math.floor(Math.random() * 256)
+                };
+            };
+        
+            const color1 = randomRGB();
+            const color2 = randomRGB();
+        
+            // Create a gradient using the random RGB values
+            return `linear-gradient(135deg, rgb(${color1.r}, ${color1.g}, ${color1.b}), rgb(${color2.r}, ${color2.g}, ${color2.b}))`;
+        }
+        function setProfileGradient() {
+            $('.profile-card').each(function() {
+                let gradient;
+        
+                // Check if a gradient cookie exists
+                if ($.cookie('user_gradient')) {
+                    gradient = $.cookie('user_gradient');
+                } else {
+                    gradient = getRandomGradient();
+                    $.cookie('user_gradient', gradient, { expires: 365 });  // Store the gradient in a cookie for 1 year
+                }
+        
+                $(this).css('background', gradient);
+            });
+        }
+        
+        $(document).ready(function() {
+            setProfileGradient();
+        });
+
         $(document).ready(function() {
             var coursesListEl = $('#coursesList');
             function loadCourses(lat, lon) {
