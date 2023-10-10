@@ -517,6 +517,27 @@ def decline_request(request_id):
         flash('Friend request declined.')
     return redirect(url_for('profile'))
 
+@app.route('/get_friends', methods=['GET'])
+def get_friends():
+    # Fetch friendships where the current user is involved
+    friendships = Friendship.query.filter((Friendship.user1_id == current_user.id) | (Friendship.user2_id == current_user.id)).all()
+
+    friends = []
+    for friendship in friendships:
+        # Determine which user in the friendship is the friend of the current user
+        if friendship.user1_id == current_user.id:
+            friend = User.query.get(friendship.user2_id)
+        else:
+            friend = User.query.get(friendship.user1_id)
+        
+        friends.append({
+            'id': friend.id,
+            'username': friend.username,
+            'profile_pic': friend.profile_pic
+        })
+
+    return jsonify(friends)
+
 @app.route("/logout")
 def logout():
     logout_user()

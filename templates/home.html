@@ -96,6 +96,26 @@
         </div>
       </div>
     </div>
+    <div class="modal" id="selectFriendsModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Select Friends</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <ul id="friendsList" class="list-group">
+              <!-- Friends will be added here by JavaScript -->
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="startGroupPlay">Start Group Play</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         function getRandomGradient() {
@@ -143,7 +163,8 @@
                         var courseEl = $(
                             `<li class="list-group-item">${course.name}
                             <span class="badge badge-primary">${course.distance.toFixed(2)} km</span>
-                            <button type="button" class="btn btn-primary select-course" data-course-id="${course.id}">Select</button>
+                            <button type="button" class="btn btn-primary select-course-solo" data-course-id="${course.id}">Solo</button>
+                            <button type="button" class="btn btn-primary select-course-group" data-course-id="${course.id}">Group</button>
                             </li>`
                         );
                         coursesListEl.append(courseEl);
@@ -201,20 +222,29 @@
                     $('#complete-scorecard').show();
                 });
             });
-            $('body').on('click', '.select-course', function() {
+            $('body').on('click', '.select-course-solo, .select-course-group', function() {
                 var courseId = $(this).data('course-id');
-                $.ajax({
-                    url: '/select_course',
-                    method: 'POST',
-                    data: { course_id: courseId },
-                    success: function(response) {
-                        if (response.result == 'success') {
-                            window.location.href = '/home';
+                if ($(this).hasClass('select-course-solo')) {
+                    // Existing logic to start solo play
+                    $.ajax({
+                        url: '/select_course',
+                        method: 'POST',
+                        data: { course_id: courseId },
+                        success: function(response) {
+                            if (response.result == 'success') {
+                                window.location.href = '/home';
+                            }
                         }
-                    }
-                });
+                    });
+                } else if ($(this).hasClass('select-course-group')) {
+                    // Hide the "Select Course" modal
+                    $('#selectCourseModal').modal('hide');
+                    // Show the "Select Friends" modal
+                    $('#selectFriendsModal').modal('show');
+                    // Optionally, store the selected course ID for later use
+                    $('#selectFriendsModal').data('selected-course-id', courseId);
+                }
             });
-    
             $('body').on('click', '.increase-throw, .decrease-throw', function() {
                 var count = parseInt($('#throw-count').text());
                 if ($(this).hasClass('increase-throw')) {
@@ -277,6 +307,23 @@
                     changeHole(e.currentTarget);
                 }
             });
+            $('#selectFriendsModal').on('shown.bs.modal', function() {
+                var friendsListEl = $('#friendsList');
+                friendsListEl.empty(); // Clear the list
+                $.get('/get_friends', function(data) {
+                    for (var i = 0; i < data.length; i++) {
+                        var friend = data[i];
+                        var friendEl = $(
+                            `<li class="list-group-item">
+                                ${friend.username}
+                                <button class="btn btn-primary send-invite" data-friend-id="${friend.id}">Send Invite</button>
+                            </li>`
+                        );
+                        friendsListEl.append(friendEl);
+                    }
+                });
+            });
+
         });
     
         function updateThrowCount() {
