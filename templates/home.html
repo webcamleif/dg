@@ -280,8 +280,8 @@
             $.get('/get_hole_info', { course_id: courseId, hole_number: holeNumber }, function(data) {
                 // update hole number, distance, and par
                 $('h3').text('Hole: ' + data.hole_number);
-                $('.distance').text('Distance: ' + data.distance + ' m');
-                $('.par').text('Par: ' + data.par);
+                $('.distance').html('<i class="fas fa-ruler"></i>Dist: ' + data.distance + ' m');
+                $('.par').html('<i class="fas fa-flag"></i>Par: ' + data.par);
             });
       
           // Fetch the throw count for the selected hole from the server
