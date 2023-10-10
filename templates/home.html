@@ -336,6 +336,32 @@
                     }
                 });
             });
+            $('body').on('click', '.send-invite', function() {
+                var friendId = $(this).data('friend-id');
+                var courseId = $('#selectFriendsModal').data('selected-course-id');
+            
+                $.ajax({
+                    url: '/send_invite',
+                    method: 'POST',
+                    data: {
+                        friend_id: friendId,
+                        course_id: courseId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Change the button text to "Pending"
+                            $(this).text('Pending');
+                            $(this).prop('disabled', true);
+                        } else {
+                            alert('Error sending invite.');
+                        }
+                    }.bind(this),
+                    error: function() {
+                        alert('Error sending invite.');
+                    }
+                });
+            });
+
 
         });
     
