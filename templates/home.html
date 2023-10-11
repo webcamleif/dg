@@ -166,13 +166,15 @@
             document.body.insertAdjacentHTML('beforeend', invitePopup);
         });
         socket.on('invite_declined', function(data) {
-            // Find the button with the matching invite ID and update its text
-            let inviteButton = $(`.send-invite[data-invite-id="${data.invite_id}"]`);
+            // Find the button with the matching friend ID and update its text and color
+            let inviteButton = $(`.send-invite[data-friend-id="${data.friend_id}"]`);
             if (inviteButton.length) {
                 inviteButton.text('Declined');
+                inviteButton.css('color', 'red');
                 inviteButton.prop('disabled', true);
             }
         });
+
         $(document).ready(function() {
             var coursesListEl = $('#coursesList');
             function loadCourses(lat, lon) {
