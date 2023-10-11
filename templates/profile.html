@@ -144,37 +144,32 @@
 
     }
 
-    function appendMessage(sender, content, timestamp) {
-        var messageElement = $('<div>').html(' (' + timestamp + ') ' + '<strong>' + sender + ': ' + '</strong>' + content);
+    function appendMessage(sender, content, timestamp, messageId) {
+        var messageElement = $('<div>').attr('data-message-id', messageId).html(' (' + timestamp + ') ' + '<strong>' + sender + ': ' + '</strong>' + content);
         $('.chat-messages').append(messageElement);
         scrollToBottom();
     }
-    
+
     function sendMessage() {
         var messageContent = $('.chat-input').val();
-        var date = new Date();
-        var day = String(date.getDate()).padStart(2, '0');  // Get the day and ensure it's two digits
-        var month = String(date.getMonth() + 1).padStart(2, '0');  // Get the month (0-11, so add 1) and ensure it's two digits
-        var hours = String(date.getHours()).padStart(2, '0');  // Get the hours and ensure it's two digits
-        var minutes = String(date.getMinutes()).padStart(2, '0');  // Get the minutes and ensure it's two digits
-        
-        var currentTimestamp = day + '/' + month + ' ' + hours + ':' + minutes;
-
+        var tempMessageId = Date.now();  // Using the current timestamp as a temporary ID
+        appendMessage('You', messageContent, getCurrentTimestamp(), tempMessageId);
         socket.emit('send_message', {
             'receiver_id': receiverId,
-            'content': messageContent
+            'content': messageContent,
+            'temp_id': tempMessageId
         });
-        appendMessage('You', messageContent, currentTimestamp);  // Pass the currentTimestamp here
         $('.chat-input').val('');  // Clear the input field
     }
-    
     socket.on('receive_message', function(data) {
-        console.log("Received message:", data);
-        var chatMessagesDiv = $('.chat-messages');
-        chatMessagesDiv.append(`<p>(${data.timestamp}) ${data.sender_name}: ${data.content}</p>`);
-        chatMessagesDiv.append(`<p>(${data.timestamp}) <strong>${data.sender_name}</strong>: ${data.content}</p>`);
-        scrollToBottom();
+        var existingMessage = $(`.chat-messages [data-message-id="${data.temp_id}"]`);
+        if (existingMessage.length) {
+            existingMessage.attr('data-message-id', data.message_id).html(`(${data.timestamp}) <strong>${data.sender_name}</strong>: ${data.content}`);
+        } else {
+            appendMessage(data.sender_name, data.content, data.timestamp, data.message_id);
+        }
     });
+ 
     function scrollToBottom() {
         var chatMessagesDiv = $('.chat-messages');
         chatMessagesDiv.scrollTop(chatMessagesDiv[0].scrollHeight);
