@@ -423,6 +423,27 @@
             });
 
         });
+        function acceptInvite(inviteId) {
+            $.ajax({
+                url: '/accept_invite',
+                method: 'POST',
+                data: {
+                    invite_id: inviteId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        console.log('Invite accepted successfully.');
+                        // Additional logic to handle a successful response, e.g., update the UI
+                    } else {
+                        console.error('Error accepting invite.');
+                    }
+                },
+                error: function() {
+                    console.error('Error accepting invite.');
+                }
+            });
+        }
+
         function declineInvite(inviteId, element) {
             // Remove the popup from the DOM
             $(element).closest('.invite-popup').remove();
