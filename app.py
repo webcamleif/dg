@@ -378,7 +378,8 @@ def home(hole_number):
         holes = []
         active_hole = None
     courses = Course.query.all()
-    return render_template('home.html', active_scorecard=active_scorecard, user=current_user, courses=courses, holes=holes, active_hole=active_hole, active_course=active_course)
+    has_accepted_invites = Invite.query.filter_by(receiver_id=current_user.id, status='accepted').count() > 0
+    return render_template('home.html', active_scorecard=active_scorecard, user=current_user, courses=courses, holes=holes, active_hole=active_hole, active_course=active_course, has_accepted_invites=has_accepted_invites)
 
 @app.route('/courses')
 @login_required

@@ -112,7 +112,11 @@
             <p id="noFriendsMessage" style="display: none;">You do not have any friends yet.</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="startGroupPlay">Start Group Play</button>
+              {% if has_accepted_invites %}
+                  <button type="button" class="btn btn-primary" id="startGroupPlay">Start Group Play</button>
+              {% else %}
+                  <button type="button" class="btn btn-primary" id="startGroupPlay" disabled>Waiting for friends..</button>
+              {% endif %}
           </div>
         </div>
       </div>
@@ -165,6 +169,17 @@
                 </div>
             `;
             document.body.insertAdjacentHTML('beforeend', invitePopup);
+        });
+        socket.on('invite_accepted', function(data) {
+            // Find the button with the matching friend ID and update its text and color
+            let inviteButton = $(`.send-invite[data-friend-id="${data.friend_id}"]`);
+            if (inviteButton.length) {
+                inviteButton.text('Accepted');
+                inviteButton.css('color', 'green');
+                inviteButton.prop('disabled', true);
+            }
+            $('#startGroupPlay').text('Start Group Play');
+            $('#startGroupPlay').prop('disabled', false);
         });
         socket.on('invite_declined', function(data) {
             // Find the button with the matching friend ID and update its text and color
@@ -340,6 +355,7 @@
                             $('#selectFriendsModal').modal('hide');
                             $('#selectCourseModal').modal('show');
                         });
+                        $('#startGroupPlay').prop('disabled', false); // Ensure the "Back" button is enabled
                     } else {
                         for (var i = 0; i < friends.length; i++) {
                             var friend = friends[i];
@@ -351,16 +367,15 @@
                             );
                             friendsListEl.append(friendEl);
                         }
-                    }
             
-                    if (!data.has_accepted_invites) {
-                        $('#startGroupPlay').prop('disabled', true);
-                    } else {
-                        $('#startGroupPlay').prop('disabled', false);
+                        if (!data.has_accepted_invites) {
+                            $('#startGroupPlay').prop('disabled', true);
+                        } else {
+                            $('#startGroupPlay').prop('disabled', false);
+                        }
                     }
                 });
             });
-
             $('body').on('click', '.send-invite', function() {
                 var friendId = $(this).data('friend-id');
                 var courseId = $('#selectFriendsModal').data('selected-course-id');
