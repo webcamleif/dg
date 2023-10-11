@@ -161,11 +161,19 @@
                     ${data.sender_name} has invited you to a group play in ${data.course_name}
                     <div>
                         <button class="accept" onclick="acceptInvite(${data.invite_id})">Accept</button>
-                        <button class="decline" onclick="declineInvite(${data.invite_id})">Decline</button>
+                        <button class="decline" onclick="declineInvite(${data.invite_id}, this)">Decline</button>
                     </div>
                 </div>
             `;
             document.body.insertAdjacentHTML('beforeend', invitePopup);
+        });
+        socket.on('invite_declined', function(data) {
+            // Find the button with the matching invite ID and update its text
+            let inviteButton = $(`.send-invite[data-invite-id="${data.invite_id}"]`);
+            if (inviteButton.length) {
+                inviteButton.text('Declined');
+                inviteButton.prop('disabled', true);
+            }
         });
         $(document).ready(function() {
             var coursesListEl = $('#coursesList');
@@ -369,8 +377,8 @@
                             let invitePopup = `
                                 <div class="invite-popup">
                                     ${invite.sender_name} has invited you to a group play in ${invite.course_name}
-                                    <button onclick="acceptInvite(${invite.invite_id})">Accept</button>
-                                    <button onclick="declineInvite(${invite.invite_id})">Decline</button>
+                                    <button class="accept" onclick="acceptInvite(${invite.invite_id})">Accept</button>
+                                    <button class="decline" onclick="declineInvite(${invite.invite_id}, this)">Decline</button>
                                 </div>
                             `;
                             document.body.innerHTML += invitePopup;
@@ -383,7 +391,29 @@
             });
 
         });
-    
+        function declineInvite(inviteId, element) {
+            // Remove the popup from the DOM
+            $(element).closest('.invite-popup').remove();
+        
+            // Send a message to the server to update the invite status
+            $.ajax({
+                url: '/decline_invite',
+                method: 'POST',
+                data: {
+                    invite_id: inviteId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        console.log('Invite declined successfully.');
+                    } else {
+                        console.error('Error declining invite.');
+                    }
+                },
+                error: function() {
+                    console.error('Error declining invite.');
+                }
+            });
+        }
         function updateThrowCount() {
             var scorecardId = $('.throws').data('scorecard-id');
             var holeNumber = $('.throws').data('hole-number'); // Use 'data-hole-number' of the '.throws' div instead of URL

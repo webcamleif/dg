@@ -67,6 +67,22 @@ def save_sid(user_id, sid):
         user.sid = sid
         db.session.commit()
 
+@app.route('/decline_invite', methods=['POST'])
+@login_required
+def decline_invite_endpoint():
+    invite_id = request.form.get('invite_id')
+    invite = Invite.query.get(invite_id)
+    if invite and invite.receiver_id == current_user.id:
+        invite.status = "Declined"
+        db.session.commit()
+        return jsonify(success=True)
+
+    sender_sid = User.query.get(invite.sender_id).sid
+    if sender_sid:
+        socketio.emit('invite_declined', {'invite_id': invite.id}, room=sender_sid)
+
+    return jsonify(success=False, message="Error declining invite.")
+
 @app.route('/send_invite', methods=['POST'])
 @login_required
 def send_invite_endpoint():
