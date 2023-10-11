@@ -127,6 +127,7 @@
         receiverId = friendId;
 
         // Fetch previous messages and display them
+        console.log("Fetching chat history for friend:", friendId);
         $.ajax({
             url: '/get_chat_history',
             type: 'POST',
@@ -164,6 +165,7 @@
             'receiver_id': receiverId,
             'content': messageContent
         });
+        console.log("Sending message:", messageContent);
         appendMessage('You', messageContent, currentTimestamp);  // Pass the currentTimestamp here
         $('.chat-input').val('');  // Clear the input field
     }
@@ -171,7 +173,6 @@
     socket.on('receive_message', function(data) {
         console.log("Received message:", data);
         var chatMessagesDiv = $('.chat-messages');
-        chatMessagesDiv.append(`<p>(${data.timestamp}) ${data.sender_name}: ${data.content}</p>`);
         chatMessagesDiv.append(`<p>(${data.timestamp}) <strong>${data.sender_name}</strong>: ${data.content}</p>`);
         scrollToBottom();
     });

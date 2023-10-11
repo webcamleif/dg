@@ -75,15 +75,20 @@ def save_sid(user_id, sid):
 @login_required
 def decline_invite_endpoint():
     invite_id = request.form.get('invite_id')
+    print(f"Invite ID {invite_id}")
     invite = Invite.query.get(invite_id)
+    print(f"Invite ID {invite}")
     if invite and invite.receiver_id == current_user.id:
+        print(f"Did we decline?")
         invite.status = "Declined"
         db.session.commit()
         return jsonify(success=True)
 
     sender_sid = User.query.get(invite.sender_id).sid
+    print(f"Sender SID {sender_sid}")
     if sender_sid:
         socketio.emit('invite_declined', {'invite_id': invite.id}, room=sender_sid)
+        print("WE DECLINED")
 
     return jsonify(success=False, message="Error declining invite.")
 
@@ -104,7 +109,8 @@ def send_invite_endpoint():
     if receiver_sid:
         socketio.emit('receive_invite', {
             'sender_name': current_user.username,
-            'course_name': Course.query.get(course_id).name
+            'course_name': Course.query.get(course_id).name,
+            'invite_id' : invite.id
         }, room=receiver_sid)
 
     return jsonify(success=True)
@@ -136,15 +142,14 @@ def handle_send_message(data):
 
         # Emit the message to the intended recipient using their socket session ID
         receiver_socket_id = user_socket_map.get(receiver_id)
+        print(f"Received message from user {sender_id} to user {receiver_id}: {data['content']}")
         if receiver_socket_id:
             emit('receive_message', {
-                'sender_name': sender_name,
-                'content': data['content'],
-                'timestamp': currentTimestamp,
-                'temp_id': data['temp_id'],
-                'message_id': actual_message_id
+                'sender_id': sender_id,
+                'sender_name': current_user.username,
+                'content': content,
+                'timestamp': message.timestamp.strftime('%d/%m %H:%M')
             }, room=receiver_socket_id)
-
     except Exception as e:
         print(f"Error sending message: {e}")
 
