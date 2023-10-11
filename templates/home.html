@@ -120,6 +120,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
         var socket = io.connect('https://' + document.domain + ':' + location.port);
+        
+        socket.on('connect', function() {
+            console.log('Connected with SID:', socket.id);
+        });
+        
+        socket.on('disconnect', function(reason) {
+            console.log('Disconnected due to:', reason);
+        });
+        
+        socket.on('connect_error', function(error) {
+            console.log('Connection error:', error);
+        });
+        
+        socket.on('reconnect_attempt', function() {
+            console.log('Reconnect attempt');
+        });
+        socket.on('reconnect', function() {
+            // Send the new SID to the server
+            socket.emit('update_sid', {sid: socket.id});
+        });
         function getRandomGradient() {
             // Generate random RGB values
             const randomRGB = () => {
@@ -156,6 +176,7 @@
             setProfileGradient();
         });
         socket.on('receive_invite', function(data) {
+            console.log('Invite received:', data);
             // Display the popup to the user
             let invitePopup = `
                 <div class="invite-popup">

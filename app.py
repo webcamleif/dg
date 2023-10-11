@@ -15,6 +15,7 @@ from math import radians, cos, sin, asin, sqrt
 from PIL import Image, ImageDraw, ImageFont
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from datetime import datetime, timedelta
+from flask_migrate import Migrate
 import os, secrets, logging
 
 photos = UploadSet('photos', IMAGES)
@@ -35,6 +36,7 @@ app.config['SECRET_KEY'] = 'your_secret_key'  # Replace with your secret key
 app.config['GOOGLE_OAUTH_CLIENT_ID'] = os.getenv('GOOGLE_CLIENT_ID')
 app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = os.getenv('GOOGLE_CLIENT_SECRET')
 setup_db(app)
+migrate = Migrate(app, db)
 user_socket_map = {}
 
 @socketio.on('connect')
@@ -42,15 +44,35 @@ def handle_connect():
     # When a user connects, map their user ID to their socket session ID
     user_id = current_user.id
     user_socket_map[user_id] = request.sid
+    print(f"User {user_id} connected with SID {request.sid}")
 
 @socketio.on('disconnect')
 def handle_disconnect():
     # When a user disconnects, remove them from the mapping
     user_id = current_user.id
     user_socket_map.pop(user_id, None)
+    if user_id in user_socket_map and user_socket_map[user_id] == request.sid:
+        del user_socket_map[user_id]
+    print(f"User {user_id} disconnected with SID {request.sid}")
+
+@socketio.on('update_sid')
+def handle_update_sid(data):
+    user_id = current_user.id  # Assuming you have access to the current user's ID
+    new_sid = data['sid']
+    save_sid(user_id, new_sid)  # Assuming save_sid updates the SID in the database
+
+def save_sid(user_id, sid):
+    user = User.query.get(user_id)
+    if user:
+        user.sid = sid
+        db.session.commit()
+
+@socketio.on_error_default
+def default_error_handler(e):
+    print(f"Socket.io error: {str(e)}")
 
 @app.route('/send_invite', methods=['POST'])
-def send_invite():
+def send_invite_endpoint():
     friend_id = request.form.get('friend_id')
     course_id = request.form.get('course_id')
     
@@ -59,10 +81,18 @@ def send_invite():
     db.session.add(invite)
     db.session.commit()
     
+    sender = User.query.get(current_user.id)
+    receiver = User.query.get(friend_id)
+    course = Course.query.get(course_id)
+
+    # Logging the data
+    current_app.logger.info(f"Sender ID: {sender.id}, Sender Name: {sender.username}")
+    current_app.logger.info(f"Receiver ID: {receiver.id}, Receiver Name: {receiver.username}, Receiver SID: {user_socket_map.get(receiver.id, 'Not Found')}")
+    current_app.logger.info(f"Course ID: {course.id}, Course Name: {course.name}")
+
     # Send a real-time notification to the friend
     if friend_id in user_socket_map:
-        course = Course.query.get(course_id)
-        sender = User.query.get(current_user.id)
+        print(f"Emitting invite to SID {receiver_sid}")
         socketio.emit('receive_invite', {'sender_name': sender.username, 'course_name': course.name}, room=user_socket_map[friend_id])
     
     return jsonify(success=True)
