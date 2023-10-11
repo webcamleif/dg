@@ -41,14 +41,14 @@ user_socket_map = {}
 
 @socketio.on('connect')
 def handle_connect():
-    # When a user connects, map their user ID to their socket session ID
-    user_id = current_user.id
-    user_socket_map[user_id] = request.sid
-    print(f"User {user_id} connected with SID {request.sid}")
     if current_user.is_authenticated:
+        user_id = current_user.id
+        user_socket_map[user_id] = request.sid
+        print(f"User {user_id} connected with SID {request.sid}")
+        
         current_user.sid = request.sid
         db.session.commit()  # Assuming you're using Flask-SQLAlchemy
-        join_room(current_user.id)  # Join a room based on user ID, useful for sending user-specific messages
+        join_room(request.sid)  # Join a room based on socket session ID
 
 @socketio.on('disconnect')
 def handle_disconnect():
@@ -142,8 +142,9 @@ def handle_send_message(data):
                 'content': data['content'],
                 'timestamp': currentTimestamp,
                 'temp_id': data['temp_id'],
-                'message_id': actual_message_id  # This should be the ID of the message after saving it to the database
-            }, room=receiver_id)
+                'message_id': actual_message_id
+            }, room=receiver_socket_id)
+
     except Exception as e:
         print(f"Error sending message: {e}")
 
