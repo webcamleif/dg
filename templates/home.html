@@ -423,23 +423,23 @@
             });
 
         });
-        function acceptInvite(inviteId) {
-            $.ajax({
-                url: '/accept_invite',
+        function acceptInvite(invite_id) {
+            fetch('/accept_invite', {
                 method: 'POST',
-                data: {
-                    invite_id: inviteId
-                },
-                success: function(response) {
-                    if (response.success) {
-                        console.log('Invite accepted successfully.');
-                        // Additional logic to handle a successful response, e.g., update the UI
-                    } else {
-                        console.error('Error accepting invite.');
-                    }
-                },
-                error: function() {
-                    console.error('Error accepting invite.');
+                body: new URLSearchParams({ 'invite_id': invite_id }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the invite status in the UI
+                    let inviteElement = document.getElementById(`invite_${invite_id}`);
+                    inviteElement.textContent = "Accepted";
+                    inviteElement.style.color = "green";
+                } else {
+                    console.error(data.message);
                 }
             });
         }
