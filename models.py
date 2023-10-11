@@ -154,3 +154,11 @@ class GameInvite(db.Model):
     receiver = db.relationship('User', foreign_keys=[receiver_id])
     course = db.relationship('Course')
 
+class Invite(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
+    status = db.Column(db.String(50), default="Pending")
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+

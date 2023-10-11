@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, current_app, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import User, Scorecard, Course, Hole, db, setup_db, ScorecardDetail, Friendship, FriendRequest, Message, GameInvite
+from models import User, Scorecard, Course, Hole, db, setup_db, ScorecardDetail, Friendship, FriendRequest, Message, GameInvite, Invite
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
 from models import OAuth
@@ -67,35 +67,40 @@ def save_sid(user_id, sid):
         user.sid = sid
         db.session.commit()
 
-@socketio.on_error_default
-def default_error_handler(e):
-    print(f"Socket.io error: {str(e)}")
-
 @app.route('/send_invite', methods=['POST'])
+@login_required
 def send_invite_endpoint():
-    friend_id = request.form.get('friend_id')
+    sender_id = current_user.id
+    receiver_id = request.form.get('friend_id')
     course_id = request.form.get('course_id')
-    
-    # Create a new GameInvite entry
-    invite = GameInvite(sender_id=current_user.id, receiver_id=friend_id, course_id=course_id)
+
+    # Store the invite in the database
+    invite = Invite(sender_id=sender_id, receiver_id=receiver_id, course_id=course_id)
     db.session.add(invite)
     db.session.commit()
-    
-    sender = User.query.get(current_user.id)
-    receiver = User.query.get(friend_id)
-    course = Course.query.get(course_id)
 
-    # Logging the data
-    current_app.logger.info(f"Sender ID: {sender.id}, Sender Name: {sender.username}")
-    current_app.logger.info(f"Receiver ID: {receiver.id}, Receiver Name: {receiver.username}, Receiver SID: {user_socket_map.get(receiver.id, 'Not Found')}")
-    current_app.logger.info(f"Course ID: {course.id}, Course Name: {course.name}")
+    # Check if the receiver is online and send a real-time notification
+    receiver_sid = User.query.get(receiver_id).sid
+    if receiver_sid:
+        socketio.emit('receive_invite', {
+            'sender_name': current_user.username,
+            'course_name': Course.query.get(course_id).name
+        }, room=receiver_sid)
 
-    # Send a real-time notification to the friend
-    if friend_id in user_socket_map:
-        print(f"Emitting invite to SID {receiver_sid}")
-        socketio.emit('receive_invite', {'sender_name': sender.username, 'course_name': course.name}, room=user_socket_map[friend_id])
-    
     return jsonify(success=True)
+
+@app.route('/get_pending_invites')
+@login_required
+def get_pending_invites():
+    user_id = current_user.id
+    pending_invites = Invite.query.filter_by(receiver_id=user_id, status="Pending").all()
+    invites_data = [{
+        'sender_name': User.query.get(invite.sender_id).username,
+        'course_name': Course.query.get(invite.course_id).name,
+        'invite_id': invite.id
+    } for invite in pending_invites]
+
+    return jsonify(invites_data)
 
 @socketio.on('send_message')
 def handle_send_message(data):
