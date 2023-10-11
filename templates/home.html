@@ -109,6 +109,7 @@
             <ul id="friendsList" class="list-group">
               <!-- Friends will be added here by JavaScript -->
             </ul>
+            <p id="noFriendsMessage" style="display: none;">You do not have any friends yet.</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="startGroupPlay">Start Group Play</button>
@@ -332,18 +333,34 @@
                 var friendsListEl = $('#friendsList');
                 friendsListEl.empty(); // Clear the list
                 $.get('/get_friends', function(data) {
-                    for (var i = 0; i < data.length; i++) {
-                        var friend = data[i];
-                        var friendEl = $(
-                            `<li class="list-group-item">
-                                ${friend.username}
-                                <button class="btn btn-primary send-invite" data-friend-id="${friend.id}">Send Invite</button>
-                            </li>`
-                        );
-                        friendsListEl.append(friendEl);
+                    var friends = data.friends;
+                    if (friends.length === 0) {
+                        $('#noFriendsMessage').show();
+                        $('#startGroupPlay').text('Back').on('click', function() {
+                            $('#selectFriendsModal').modal('hide');
+                            $('#selectCourseModal').modal('show');
+                        });
+                    } else {
+                        for (var i = 0; i < friends.length; i++) {
+                            var friend = friends[i];
+                            var friendEl = $(
+                                `<li class="list-group-item">
+                                    ${friend.username}
+                                    <button class="btn btn-primary send-invite" data-friend-id="${friend.id}">Send Invite</button>
+                                </li>`
+                            );
+                            friendsListEl.append(friendEl);
+                        }
+                    }
+            
+                    if (!data.has_accepted_invites) {
+                        $('#startGroupPlay').prop('disabled', true);
+                    } else {
+                        $('#startGroupPlay').prop('disabled', false);
                     }
                 });
             });
+
             $('body').on('click', '.send-invite', function() {
                 var friendId = $(this).data('friend-id');
                 var courseId = $('#selectFriendsModal').data('selected-course-id');

@@ -603,14 +603,21 @@ def get_friends():
             friend = User.query.get(friendship.user2_id)
         else:
             friend = User.query.get(friendship.user1_id)
-        
+
         friends.append({
             'id': friend.id,
             'username': friend.username,
             'profile_pic': friend.profile_pic
         })
 
-    return jsonify(friends)
+    # Check if any friends have accepted an invitation
+    invites = Invite.query.filter_by(sender_id=current_user.id, status='Accepted').all()
+    has_accepted_invites = len(invites) > 0
+
+    return jsonify({
+        'friends': friends,
+        'has_accepted_invites': has_accepted_invites
+    })
 
 @app.route("/logout")
 def logout():
