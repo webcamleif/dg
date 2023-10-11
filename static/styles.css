@@ -646,4 +646,41 @@ tr:hover {
 .distance i, .par i {
     margin-right: 8px;  /* Spacing between the icon and the text */
 }
+.invite-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 300px;
+    color: #343a40; /* Setting text color to black */
+}
+
+.invite-popup button {
+    margin-top: 10px;
+    margin-right: 5px;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.invite-popup button:hover {
+    background-color: #ccc;
+}
+
+.invite-popup .accept {
+    background-color: #28a745; /* Green color for accept */
+    color: #ffffff;
+}
+
+.invite-popup .decline {
+    background-color: #dc3545; /* Red color for decline */
+    color: #ffffff;
+}
 

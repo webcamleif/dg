@@ -159,11 +159,13 @@
             let invitePopup = `
                 <div class="invite-popup">
                     ${data.sender_name} has invited you to a group play in ${data.course_name}
-                    <button onclick="acceptInvite()">Accept</button>
-                    <button onclick="declineInvite()">Decline</button>
+                    <div>
+                        <button class="accept" onclick="acceptInvite(${data.invite_id})">Accept</button>
+                        <button class="decline" onclick="declineInvite(${data.invite_id})">Decline</button>
+                    </div>
                 </div>
             `;
-            document.body.innerHTML += invitePopup;
+            document.body.insertAdjacentHTML('beforeend', invitePopup);
         });
         $(document).ready(function() {
             var coursesListEl = $('#coursesList');
