@@ -121,6 +121,21 @@
         </div>
       </div>
     </div>
+    <div class="modal fade" id="invitedUsersModal" tabindex="-1" role="dialog" aria-labelledby="invitedUsersModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="invitedUsersModalLabel">Invited Users</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Invited users list will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         function getRandomGradient() {
@@ -423,23 +438,22 @@
             });
 
         });
-        function acceptInvite(invite_id) {
-            fetch('/accept_invite', {
-                method: 'POST',
-                body: new URLSearchParams({ 'invite_id': invite_id }),
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
+        function acceptInvite(inviteId) {
+            $.post("/accept_invite_endpoint", { invite_id: inviteId }, function(data) {
                 if (data.success) {
-                    // Update the invite status in the UI
-                    let inviteElement = document.getElementById(`invite_${invite_id}`);
-                    inviteElement.textContent = "Accepted";
-                    inviteElement.style.color = "green";
+                    // Display the popup with the list of invited users
+                    let invitedUsersList = data.invited_users;
+                    let popupContent = "<h3>Invited Users</h3><ul>";
+                    for (let user of invitedUsersList) {
+                        popupContent += `<li>User ID: ${user.user_id}, Status: ${user.status}</li>`;
+                    }
+                    popupContent += "</ul>";
+                    
+                    // Assuming you have a modal with the ID "invitedUsersModal"
+                    $("#invitedUsersModal .modal-body").html(popupContent);
+                    $("#invitedUsersModal").modal("show");
                 } else {
-                    console.error(data.message);
+                    alert(data.message || "Error accepting invite.");
                 }
             });
         }

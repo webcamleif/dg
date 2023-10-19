@@ -86,17 +86,22 @@ def decline_invite_endpoint():
         return jsonify(success=True)
     return jsonify(success=False, message="Error declining invite.")
 
-@app.route('/accept_invite', methods=['POST'])
+@app.route('/accept_invite_endpoint', methods=['POST'])
 def accept_invite_endpoint():
     invite_id = request.form.get('invite_id')
     invite = Invite.query.get(invite_id)
     if invite and invite.receiver_id == current_user.id:
         invite.status = "Accepted"
         db.session.commit()
+        
+        # Fetch all invites for the same game
+        all_invites = Invite.query.filter_by(course_id=invite.course_id).all()
+        invited_users = [{'user_id': i.receiver_id, 'status': i.status} for i in all_invites]
+        
         sender_sid = User.query.get(invite.sender_id).sid
         if sender_sid:
             socketio.emit('invite_accepted', {'invite_id': invite.id, 'friend_id': invite.receiver_id}, room=sender_sid)
-        return jsonify(success=True)
+        return jsonify(success=True, invited_users=invited_users)
     return jsonify(success=False, message="Error accepting invite.")
 
 @app.route('/send_invite', methods=['POST'])
