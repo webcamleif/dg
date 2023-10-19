@@ -683,4 +683,25 @@ tr:hover {
     background-color: #dc3545; /* Red color for decline */
     color: #ffffff;
 }
+.status-button {
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: default;
+}
+
+.status-accepted {
+    background-color: green;
+    color: white;
+}
+
+.status-declined {
+    background-color: red;
+    color: white;
+}
+
+.status-pending {
+    background-color: grey;
+    color: white;
+}
 
