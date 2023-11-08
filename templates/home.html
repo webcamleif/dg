@@ -446,12 +446,12 @@
                     let displayedUsers = new Set(); // To track displayed users
                     for (let user of invitedUsersList) {
                         if (!displayedUsers.has(user.name)) {
-                            popupContent += `<li>${user.name} <span class="status-button status-${user.status.toLowerCase()}">${user.status}</span></li>`;
+                            popupContent += `<li>${user.user_name} <span class="status-button status-${user.status.toLowerCase()}">${user.status}</span></li>`;
                             displayedUsers.add(user.name);
                         }
                     }
                     popupContent += "</ul>";
-                    
+                    $(".invite-popup").remove(); 
                     $("#invitedUsersModal .modal-body").html(popupContent);
                     $("#invitedUsersModal").modal("show");
                 } else {

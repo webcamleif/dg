@@ -93,11 +93,18 @@ def accept_invite_endpoint():
     if invite and invite.receiver_id == current_user.id:
         invite.status = "Accepted"
         db.session.commit()
-        
+
         # Fetch all invites for the same game
         all_invites = Invite.query.filter_by(course_id=invite.course_id).all()
-        invited_users = [{'user_id': i.receiver_id, 'status': i.status} for i in all_invites]
-        
+        invited_users = []
+        for i in all_invites:
+            user = User.query.get(i.receiver_id)
+            invited_users.append({
+                'user_id': i.receiver_id,
+                'user_name': user.username,  # Fetching the user's name
+                'status': i.status
+            })
+
         sender_sid = User.query.get(invite.sender_id).sid
         if sender_sid:
             socketio.emit('invite_accepted', {'invite_id': invite.id, 'friend_id': invite.receiver_id}, room=sender_sid)
