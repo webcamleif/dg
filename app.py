@@ -117,9 +117,10 @@ def send_invite_endpoint():
     sender_id = current_user.id
     receiver_id = request.form.get('friend_id')
     course_id = request.form.get('course_id')
+    game_id = generate_unique_game_id()  # This function needs to be implemented to generate a unique ID
 
     # Store the invite in the database
-    invite = Invite(sender_id=sender_id, receiver_id=receiver_id, course_id=course_id)
+    invite = Invite(sender_id=sender_id, receiver_id=receiver_id, course_id=course_id, game_id=game_id)
     db.session.add(invite)
     db.session.commit()
 
@@ -129,7 +130,8 @@ def send_invite_endpoint():
         socketio.emit('receive_invite', {
             'sender_name': current_user.username,
             'course_name': Course.query.get(course_id).name,
-            'invite_id' : invite.id
+            'invite_id' : invite.id,
+            'game_id': game_id  # Include the game_id in the emitted event
         }, room=receiver_sid)
 
     return jsonify(success=True)

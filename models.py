@@ -159,6 +159,7 @@ class Invite(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
+    game_id = db.Column(db.String(100), unique=True, nullable=False)  # New field for unique game identifier
     status = db.Column(db.String(50), default="Pending")
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
